@@ -7,9 +7,9 @@ def index(request):
     return HttpResponse("Heure A %r" % time)
 
 def infoA(request):
-        infoB = api.send_request('test', 'infoBTest')
-        return HttpResponse("Hello I'm Gestion Magasin and I'm talking to : %r" % infoB)
+        infoB = api.send_request('caisse', 'helloworld')
+        return HttpResponse("Bonjour je m'appelle gestion magasin : %r" % infoB)
         #return HttpResponse("Hello i'm GM")
 
 def hello():
-    return HttpResponse("Hello i'm gestion magasin")
+    return HttpResponse("bonjour je suis gestion magasin")

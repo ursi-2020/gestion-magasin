@@ -12,6 +12,9 @@ class Article(models.Model):
 class Vente(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     date = models.DateTimeField()
+    nbRequests = models.IntegerField()
 
     def __str__(self):
         return 'Vente: {} - {}'.format(self.article.nom, self.date)
+
+

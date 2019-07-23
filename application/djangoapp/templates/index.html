@@ -6,6 +6,8 @@
     <h1>Gestion magasin App</h1>
 </head>
 <body>
-    <button>Request app: Caisse</button>
+    <form><button name="request" formaction="{% url 'infoA' %}">Request app: Caisse</button></form>
+    <p> {{ info }} </p>
+    <p> Vous avez réalisé: {{ click.nbRequests }} requêtes </p>
 </body>
 </html>

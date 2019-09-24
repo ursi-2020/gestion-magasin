@@ -7,12 +7,14 @@ from django.shortcuts import render
 from application.djangoapp.models import Info
 from application.djangoapp.models import Product
 
+
 def index(request):
     time = api.send_request('scheduler', 'clock/time')
     if Info.objects.all():
         click = Info.objects.first()
         click.delete()
     return HttpResponse("Bienvenue sur l'application Gestion Magasin, il est: %r" % time)
+
 
 def infoA(request):
     context = {
@@ -30,6 +32,7 @@ def infoA(request):
     context['click'] = click
     return render(request, 'index.html', context)
 
+
 def hello(request):
     return HttpResponse("Bonjour je suis gestion magasin")
 
@@ -42,6 +45,7 @@ def getProducts(request):
     }
     print(data['produits'])
     for produit in data['produits']:
-        p = Product(codeProduit=produit['codeProduit'], familleProduit=produit['familleProduit'], descriptionProduit=produit['descriptionProduit'], prix=produit['prix'])
+        p = Product(codeProduit=produit['codeProduit'], familleProduit=produit['familleProduit'],
+                    descriptionProduit=produit['descriptionProduit'], prix=produit['prix'])
         p.save()
     return render(request, 'app.html', context)

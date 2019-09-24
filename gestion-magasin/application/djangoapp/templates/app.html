@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion magasin App</title>
+    <h1>Application gestion magasin</h1>
+</head>
+<body>
+    {% for produit in products %}
+        Id:  {{ produit.id }} <br>
+        Code Produit: {{ produit.codeProduit }} <br>
+        Famille Produit: {{ produit.familleProduit }} <br>
+        Description: {{ produit.descriptionProduit }} <br>
+        Prix: {{ produit.prix }} € <br>
+        <br><br>
+    {% endfor %}
+</body>
+</html>

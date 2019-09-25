@@ -6,12 +6,23 @@
     <h1>Application gestion magasin</h1>
 </head>
 <body>
+    <h2>Liste des produits du catalogue produit</h2>
     {% for produit in products %}
         Id:  {{ produit.id }} <br>
         Code Produit: {{ produit.codeProduit }} <br>
         Famille Produit: {{ produit.familleProduit }} <br>
         Description: {{ produit.descriptionProduit }} <br>
         Prix: {{ produit.prix }} € <br>
+        <br><br>
+    {% endfor %}
+
+    <h2>Liste des clients du crm</h2>
+    {% for c in customers %}
+        Nom:  {{ c.lastName }} <br>
+        Prénom: {{ c.firstName }} <br>
+        Points de fidélité: {{ c.fidelityPoint }} <br>
+        Payement: {{ c.payement }} <br>
+        Compte: {{ c.account }} € <br>
         <br><br>
     {% endfor %}
 </body>

@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 from application.djangoapp.models import Info
 from application.djangoapp.models import Produit
+from application.djangoapp.models import Customer
 
 
 def index(request):
@@ -53,3 +54,25 @@ def getProducts(request):
 def sendProducts(request):
     products = list(Produit.objects.all().values())
     return JsonResponse({'produits': products})
+
+
+def getCustomers(request):
+    customers = api.send_request('crm', 'api/data')
+    data = json.loads(customers)
+    print(data)
+    context = {
+        'customers': data
+    }
+    for customer in data:
+        c = Customer(firstName=customer['firstName'], lastName=customer['lastName'],
+                     fidelityPoint=customer['fidelityPoint'], payment=customer['payment'],
+                     account=customer['account'])
+
+        print(c)
+        c.save()
+    return render(request, 'app.html', context)
+
+
+def sendCustomers(request):
+    customers = list(Customer.objects.all().values())
+    return JsonResponse({'customers': customers})

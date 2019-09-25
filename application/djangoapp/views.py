@@ -1,11 +1,11 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from apipkg import api_manager as api
 from django.shortcuts import render
 
 from application.djangoapp.models import Info
-from application.djangoapp.models import Product
+from application.djangoapp.models import Produit
 
 
 def index(request):
@@ -43,9 +43,15 @@ def getProducts(request):
     context = {
         'products': data['produits']
     }
-    print(data['produits'])
     for produit in data['produits']:
-        p = Product(codeProduit=produit['codeProduit'], familleProduit=produit['familleProduit'],
+        p = Produit(codeProduit=produit['codeProduit'], familleProduit=produit['familleProduit'],
                     descriptionProduit=produit['descriptionProduit'], prix=produit['prix'])
         p.save()
     return render(request, 'app.html', context)
+
+
+def sendProducts(request):
+    if Produit.objects.all.empty():
+        return JsonResponse({'produits': 'Le référentiel est vide, il n\'y a aucun produit'})
+    products = list(Produit.objects.all().values())
+    return JsonResponse({'produits': products})

@@ -19,7 +19,7 @@ class Vente(models.Model):
 class Info(models.Model):
     nbRequests = models.IntegerField()
 
-class Product(models.Model):
+class Produit(models.Model):
     codeProduit = models.CharField(max_length=200)
     familleProduit = models.CharField(max_length=200)
     descriptionProduit = models.CharField(max_length=200)

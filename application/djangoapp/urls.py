@@ -7,4 +7,5 @@ urlpatterns = [
     path('info/', views.infoA, name='infoA'),
     path('hello/', views.hello, name='hello'),
     path('products/', views.getProducts, name='getProducts'),
+    path('api/products/', views.sendProducts, name='sendProducts'),
 ]

@@ -51,7 +51,5 @@ def getProducts(request):
 
 
 def sendProducts(request):
-    if Produit.objects.all.empty():
-        return JsonResponse({'produits': 'Le référentiel est vide, il n\'y a aucun produit'})
     products = list(Produit.objects.all().values())
     return JsonResponse({'produits': products})

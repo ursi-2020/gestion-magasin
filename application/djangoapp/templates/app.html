@@ -7,6 +7,7 @@
 </head>
 <body>
     <h2>Liste des produits du catalogue produit</h2>
+
     {% for produit in products %}
         Id:  {{ produit.id }} <br>
         Code Produit: {{ produit.codeProduit }} <br>
@@ -21,7 +22,7 @@
         Nom:  {{ c.lastName }} <br>
         Prénom: {{ c.firstName }} <br>
         Points de fidélité: {{ c.fidelityPoint }} <br>
-        Payement: {{ c.payement }} <br>
+        Payement: {{ c.payment }} <br>
         Compte: {{ c.account }} € <br>
         <br><br>
     {% endfor %}

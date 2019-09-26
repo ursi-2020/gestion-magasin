@@ -40,14 +40,17 @@ def hello(request):
 
 def getProducts(request):
     items = api.send_request('catalogue-produit', 'catalogueproduit/api/data')
+    # Try to catch bad response form the send_request, when catalogue porduit is down
     data = json.loads(items)
-    context = {
-        'products': data['produits']
-    }
+    Produit.objects.all().delete()
     for produit in data['produits']:
         p = Produit(codeProduit=produit['codeProduit'], familleProduit=produit['familleProduit'],
                     descriptionProduit=produit['descriptionProduit'], prix=produit['prix'])
         p.save()
+    context = {
+        'products': Produit.objects.all().values()
+    }
+
     return render(request, 'app.html', context)
 
 
@@ -59,20 +62,31 @@ def sendProducts(request):
 def getCustomers(request):
     customers = api.send_request('crm', 'api/data')
     data = json.loads(customers)
-    print(data)
-    context = {
-        'customers': data
-    }
+    Customer.objects.all().delete()
+
     for customer in data:
         c = Customer(firstName=customer['firstName'], lastName=customer['lastName'],
                      fidelityPoint=customer['fidelityPoint'], payment=customer['payment'],
                      account=customer['account'])
 
-        print(c)
         c.save()
+    context = {
+        'customers': Customer.objects.all().values()
+    }
     return render(request, 'app.html', context)
 
 
 def sendCustomers(request):
     customers = list(Customer.objects.all().values())
     return JsonResponse({'customers': customers})
+
+
+def sendCustomer(request, userId):
+    try:
+        customer = Customer.objects.filter(id=userId).values()
+    except Customer.DoesNotExist:
+        return JsonResponse({"Error": "customer does not exist"})
+    if customer:
+        customer = list(customer)
+        #print("Here: ", customer)
+    return JsonResponse(customer, safe=False)

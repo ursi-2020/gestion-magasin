@@ -2,5 +2,5 @@ from django.contrib import admin
 from . import models
 # Register your models here.
 
-admin.site.register(models.Article)
-admin.site.register(models.Vente)
+admin.site.register(models.Produit)
+admin.site.register(models.Customer)

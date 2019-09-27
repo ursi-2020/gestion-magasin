@@ -5,6 +5,7 @@ class Produit(models.Model):
     familleProduit = models.CharField(max_length=200)
     descriptionProduit = models.CharField(max_length=200)
     prix = models.PositiveIntegerField()
+    date = models.DateTimeField(null=True)
 
 class Customer(models.Model):
     firstName = models.CharField(max_length=200)
@@ -12,3 +13,5 @@ class Customer(models.Model):
     fidelityPoint = models.IntegerField(default=0)
     payment = models.IntegerField(default=0)
     account = models.CharField(max_length=10, default="")
+    date = models.DateTimeField(null=True)
+

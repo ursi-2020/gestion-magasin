@@ -4,12 +4,12 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from apipkg import api_manager as api
 from django.shortcuts import render
 from django.forms.models import model_to_dict
-
+from django.views.decorators.csrf import csrf_exempt
 from application.djangoapp.models import Produit, Customer
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
-# TODO: good documentation
+# TODO: very good documentation
 
 # Function to schedule a task
 def schedule_task(host, url, time, recurrence, data, source, name):
@@ -22,6 +22,12 @@ def schedule_task(host, url, time, recurrence, data, source, name):
     print(r.text)
     return r.text
 
+
+def schedule_task_simple(task, recurrence):
+    clock_time = api.send_request('scheduler', 'clock/time')
+    time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
+    time = time + timedelta(seconds=10)
+    schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', task)
 
 # Only shows the current data of the database, does not update it
 def index(request):
@@ -43,7 +49,7 @@ def index(request):
         'time': get_current_datetime().strftime("%Y-%m-%d %H:%M:%S"),
         'products': products,
         'customers': Customer.objects.all().values(),
-        'products_update_time' : products_update_time,
+        'products_update_time': products_update_time,
         'customers_update_time': customers_update_time
     }
     return render(request, 'index.html', context)
@@ -55,6 +61,7 @@ def get_products(request):
     return JsonResponse(products, safe=False)
 
 
+@csrf_exempt
 def update_products(request):
     # TODO: Check if the request type is a POST, if not, return error
 
@@ -91,7 +98,7 @@ def get_customer(request, user_id):
     customer = model_to_dict(customer)
     return JsonResponse(customer, safe=False)
 
-
+@csrf_exempt
 def update_customers(request):
     # TODO: Check if the request type is a POST, if not, return error
 
@@ -111,6 +118,7 @@ def update_customers(request):
         c.save()
 
     return HttpResponseRedirect('/')
+
 
 def get_current_datetime():
     clock_time = api.send_request('scheduler', 'clock/time').strip('"')

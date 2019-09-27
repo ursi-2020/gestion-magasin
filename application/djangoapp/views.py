@@ -7,16 +7,22 @@ from application.djangoapp.models import Produit, Customer
 from application.djangoapp.customer_utils import update_customers
 from application.djangoapp.product_utils import update_products
 
+# TODO: good documentation
+
 # Only shows the current data of the database, does not update it
 def index(request):
     update_products() # TODO: remove this and schedule the update
     update_customers() # TODO: remove this and schedule the update
+
+    products = Produit.objects.all().values()
+    for product in products:
+        product.update(prix=product['prix']/100)
     context = {
         'time': api.send_request('scheduler', 'clock/time'),
-        'products': Produit.objects.all().values(),
+        'products': products,
         'customers': Customer.objects.all().values()
     }
-    return render(request, 'app.html', context)
+    return render(request, 'index.html', context)
 
 # For CAISSE
 def get_products(request):

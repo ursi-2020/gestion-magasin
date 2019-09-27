@@ -1,92 +1,42 @@
-import json
-
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from apipkg import api_manager as api
 from django.shortcuts import render
+from django.forms.models import model_to_dict
 
-from application.djangoapp.models import Info
-from application.djangoapp.models import Produit
-from application.djangoapp.models import Customer
+from application.djangoapp.models import Produit, Customer
+from application.djangoapp.customer_utils import update_customers
+from application.djangoapp.product_utils import update_products
 
-
+# Only shows the current data of the database, does not update it
 def index(request):
-    time = api.send_request('scheduler', 'clock/time')
-    if Info.objects.all():
-        click = Info.objects.first()
-        click.delete()
-    return HttpResponse("Bienvenue sur l'application Gestion Magasin, il est: %r" % time)
-
-
-def infoA(request):
+    update_products() # TODO: remove this and schedule the update
+    update_customers() # TODO: remove this and schedule the update
     context = {
-        'info': 'Pas d\'info reçu de l\'app Caisse'
-    }
-    if not Info.objects.all():
-        click = Info(nbRequests=0)
-        click.save()
-    else:
-        click = Info.objects.first()
-        click.nbRequests = click.nbRequests + 1
-        click.save()
-        info = api.send_request('caisse', 'helloworld')
-        context['info'] = info
-    context['click'] = click
-    return render(request, 'index.html', context)
-
-
-def hello(request):
-    return HttpResponse("Bonjour je suis gestion magasin")
-
-
-def getProducts(request):
-    items = api.send_request('catalogue-produit', 'catalogueproduit/api/data')
-    # Try to catch bad response form the send_request, when catalogue porduit is down
-    data = json.loads(items)
-    Produit.objects.all().delete()
-    for produit in data['produits']:
-        p = Produit(codeProduit=produit['codeProduit'], familleProduit=produit['familleProduit'],
-                    descriptionProduit=produit['descriptionProduit'], prix=produit['prix'])
-        p.save()
-    context = {
-        'products': Produit.objects.all().values()
-    }
-
-    return render(request, 'app.html', context)
-
-
-def sendProducts(request):
-    products = list(Produit.objects.all().values())
-    return JsonResponse({'produits': products})
-
-
-def getCustomers(request):
-    customers = api.send_request('crm', 'api/data')
-    data = json.loads(customers)
-    Customer.objects.all().delete()
-
-    for customer in data:
-        c = Customer(firstName=customer['firstName'], lastName=customer['lastName'],
-                     fidelityPoint=customer['fidelityPoint'], payment=customer['payment'],
-                     account=customer['account'])
-
-        c.save()
-    context = {
+        'time': api.send_request('scheduler', 'clock/time'),
+        'products': Produit.objects.all().values(),
         'customers': Customer.objects.all().values()
     }
     return render(request, 'app.html', context)
 
+# For CAISSE
+def get_products(request):
+    update_products() # TODO: remove this and schedule the update
+    products = list(Produit.objects.all().values())
+    return JsonResponse(products, safe=False)
 
-def sendCustomers(request):
+# For CAISSE
+def get_customers(request):
+    update_customers() # TODO: remove this and schedule the update
     customers = list(Customer.objects.all().values())
-    return JsonResponse({'customers': customers})
+    return JsonResponse(customers, safe=False)
 
-
-def sendCustomer(request, userId):
+# For CAISSE
+def get_customer(request, user_id):
+    update_customers() # TODO: remove this and schedule the update
     try:
-        customer = Customer.objects.filter(id=userId).values()
+        customer = Customer.objects.get(account=user_id)
     except Customer.DoesNotExist:
+        # TODO: Return an HTTP error instead of a JSON response
         return JsonResponse({"Error": "customer does not exist"})
-    if customer:
-        customer = list(customer)
-        #print("Here: ", customer)
+    customer = model_to_dict(customer)
     return JsonResponse(customer, safe=False)

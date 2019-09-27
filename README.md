@@ -1,6 +1,6 @@
 # Gestion Magasin
 
-## GET /products/
+### GET /products/
 Response: JSON Array
 ```
 [
@@ -22,7 +22,7 @@ Response: JSON Array
 ]
 ```
 
-## GET /customers/
+### GET /customers/
 Response: JSON Array
 ```
 [
@@ -46,10 +46,10 @@ Response: JSON Array
 ]
 ```
 
-## GET /customers/<str:account_id>
+### GET /customers/<str:account_id>
 Response: JSON Object
 
-### Ex: /customers/BKN1CST18
+##### Example: <br> GET /customers/BKN1CST18
 ```
 {
   "id": 97,

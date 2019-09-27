@@ -1,3 +1,4 @@
+import requests
 from django.http import JsonResponse
 from apipkg import api_manager as api
 from django.shortcuts import render
@@ -8,6 +9,16 @@ from application.djangoapp.customer_utils import update_customers
 from application.djangoapp.product_utils import update_products
 
 # TODO: good documentation
+
+# Function to schedule a task
+def schedule_task(host, url, time, recurrence, data, source, name):
+    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
+    headers = {'Host': 'scheduler'}
+    data = {"target_url": url, "target_app": host, "time": time_str, "recurrence": recurrence, "data": data, "source_app": source, "name": name}
+    r = requests.post(api.api_services_url + 'schedule/add', headers = headers, json = data)
+    print(r.status_code)
+    print(r.text)
+    return r.text
 
 # Only shows the current data of the database, does not update it
 def index(request):

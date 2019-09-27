@@ -4,7 +4,7 @@ from apipkg import api_manager as api
 from application.djangoapp.models import Produit
 
 def update_products():
-    items = api.send_request('catalogue-produit', 'catalogueproduit/api/data')
+    items = api.send_request('catalogue-produit', 'api/data')
     # TODO: Try to catch bad response form the send_request, when CATALOGUE is down
 
     Produit.objects.all().delete()

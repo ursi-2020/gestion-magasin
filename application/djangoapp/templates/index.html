@@ -1,66 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestion magasin App</title>
-    <h1>Gestion Magasin</h1>
+    <head>
+        <meta charset="UTF-8">
+        <title>Gestion magasin App</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
 
-</head>
-<body style="margin:50px">
+        <h1 style="background-color: #e9ecef">Gestion Magasin</h1>
 
-    <p>Bienvenue sur l'application Gestion Magasin, il est: {{ time }}</p>
+        <div style="margin:20px">
+            <p>Bienvenue sur l'application Gestion Magasin, il est: {{ time }}</p>
 
-    <div>
-        <h2>Catalogue:</h2>
-        <table class="table table-hover table-sm table-bordered">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Code produit</th>
-                    <th scope="col">Famille produit</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Prix (en €)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr>
-                    <td> {{ product.codeProduit }}</td>
-                    <td> {{ product.familleProduit }}</td>
-                    <td> {{ product.descriptionProduit }}</td>
-                    <td> {{ product.prix }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            <div style="display: flex">
+                <div style="flex: 1">
+                    <h4>Catalogue Produit</h4>
+                    <table class="table table-hover table-sm table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Code produit</th>
+                                <th scope="col">Famille produit</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Prix (en €)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                                <tr>
+                                    <td> {{ product.codeProduit }}</td>
+                                    <td> {{ product.familleProduit }}</td>
+                                    <td> {{ product.descriptionProduit }}</td>
+                                    <td> {{ product.prix }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-    <div>
-        <h2>Clients:</h2>
-        <table class="table table-hover table-sm table-bordered">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">ID Compte</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
-                    <th scope="col">Points de fidélité</th>
-                    <th scope="col">Paiement</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for customer in customers %}
-                <tr>
-                    <td> {{ customer.account }}</td>
-                    <td> {{ customer.lastName }}</td>
-                    <td> {{ customer.firstName }}</td>
-                    <td> {{ customer.fidelityPoint }}</td>
-                    <td> {{ customer.payment }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                <div style="flex: 0.03"></div>
 
-</body>
+                <div style="flex: 1">
+                    <h4>Clients</h4>
+                    <table class="table table-hover table-sm table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">ID Compte</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Points de fidélité</th>
+                                <th scope="col">Paiement</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in customers %}
+                                <tr>
+                                    <td> {{ customer.account }}</td>
+                                    <td> {{ customer.lastName }}</td>
+                                    <td> {{ customer.firstName }}</td>
+                                    <td> {{ customer.fidelityPoint }}</td>
+                                    <td> {{ customer.payment }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </body>
 </html>

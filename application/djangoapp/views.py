@@ -59,18 +59,20 @@ def update_products(request):
 
     Produit.objects.all().delete()
 
-    data = json.loads(products)
-
     # Save dummy row in case of empty response from CATALOGUE, to store last updated time
     # Produit(codeProduit='', familleProduit='', descriptionProduit='', prix=0, date=get_current_datetime()).save()
 
-    for product in data['produits']:
-        p = Produit(codeProduit=product['codeProduit'],
-                    familleProduit=product['familleProduit'],
-                    descriptionProduit=product['descriptionProduit'],
-                    prix=product['prix'],
-                    date=get_current_datetime())
-        p.save()
+    try:
+        data = json.loads(products)
+        for product in data['produits']:
+            p = Produit(codeProduit=product['codeProduit'],
+                        familleProduit=product['familleProduit'],
+                        descriptionProduit=product['descriptionProduit'],
+                        prix=product['prix'],
+                        date=get_current_datetime())
+            p.save()
+    except json.JSONDecodeError:
+        pass
 
     return HttpResponseRedirect('/')
 
@@ -97,15 +99,18 @@ def update_customers(request):
     # Save dummy row in case of empty response from CRM, to store last updated time
     # Customer(firstName='', lastName='', fidelityPoint=0, payment=0, account='', date=get_current_datetime()).save()
 
-    data = json.loads(customers)
-    for customer in data:
-        c = Customer(firstName=customer['firstName'],
-                     lastName=customer['lastName'],
-                     fidelityPoint=customer['fidelityPoint'],
-                     payment=customer['payment'],
-                     account=customer['account'],
-                     date=get_current_datetime())
-        c.save()
+    try:
+        data = json.loads(customers)
+        for customer in data:
+            c = Customer(firstName=customer['firstName'],
+                         lastName=customer['lastName'],
+                         fidelityPoint=customer['fidelityPoint'],
+                         payment=customer['payment'],
+                         account=customer['account'],
+                         date=get_current_datetime())
+            c.save()
+    except json.JSONDecodeError:
+        pass
 
     return HttpResponseRedirect('/')
 

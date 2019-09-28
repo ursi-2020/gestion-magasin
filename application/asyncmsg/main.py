@@ -10,9 +10,7 @@ from application.djangoapp.models import *
 
 
 def main():
-    print("Liste des ventes:")
-    for v in Vente.objects.all():
-        print("ID: " + str(v.id) + "\tArticle: " + v.article.nom + "\tDate: " + str(v.date))
+    return
 
 
 if __name__ == '__main__':

@@ -19,7 +19,13 @@
                         <h4 style="flex: 1">Catalogue Produit</h4>
                         <div>
                             <p style="color: darkgrey; font-size: small; margin-right: 20px; margin-bottom: 0">dernière synchronisation:</p>
-                            <p style="color: darkgrey; font-size: small; margin-right: 20px; margin-bottom: 5px">{{ products_update_time|date:'Y-m-d H:i:s' }}</p>
+                            <p style="color: darkgrey; font-size: small; margin-right: 20px; margin-bottom: 5px">
+                                {% if products_update_time %}
+                                    {{ products_update_time|date:'Y-m-d H:i:s' }}
+                                {% else %}
+                                    jamais
+                                {% endif %}
+                            </p>
                         </div>
                         <form action={% url 'Update Products' %} method='POST'>
                             {% csrf_token %}
@@ -55,7 +61,13 @@
                         <h4 style="flex: 1">Clients</h4>
                         <div>
                             <p style="color: darkgrey; font-size: small; margin-right: 20px; margin-bottom: 0">dernière synchronisation:</p>
-                            <p style="color: darkgrey; font-size: small; margin-right: 20px; margin-bottom: 5px">{{ customers_update_time|date:'Y-m-d H:i:s' }}</p>
+                            <p style="color: darkgrey; font-size: small; margin-right: 20px; margin-bottom: 5px">
+                                {% if customers_update_time %}
+                                    {{ customers_update_time|date:'Y-m-d H:i:s' }}
+                                {% else %}
+                                    jamais
+                                {% endif %}
+                            </p>
                         </div>
                         <form action={% url 'Update Customers' %} method='POST'>
                             {% csrf_token %}

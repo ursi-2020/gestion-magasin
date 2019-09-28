@@ -1,5 +1,6 @@
 from django.db import models
 
+# TODO: Rename to 'Product'
 class Produit(models.Model):
     codeProduit = models.CharField(max_length=200)
     familleProduit = models.CharField(max_length=200)

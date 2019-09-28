@@ -46,10 +46,10 @@ Response: JSON Array
 ]
 ```
 
-### GET /customers/<str:account_id>
+### GET /customers/?account=<account_id>
 Response: JSON Object
 
-##### Example: <br> GET /customers/BKN1CST18
+##### Example: <br> GET /customers/?account=BKN1CST18
 ```
 {
   "id": 97,

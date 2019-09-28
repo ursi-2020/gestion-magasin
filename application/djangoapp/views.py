@@ -55,10 +55,11 @@ def get_products(request):
 @require_POST
 def update_products(request):
     products = api.send_request('catalogue-produit', 'api/data')
-    # TODO: Try to catch bad response form the send_request, when CATALOGUE is down
 
+    # TODO: do not delete CATALOGUE is down
     Produit.objects.all().delete()
 
+    # TODO: store last updated time when empty database
     # Save dummy row in case of empty response from CATALOGUE, to store last updated time
     # Produit(codeProduit='', familleProduit='', descriptionProduit='', prix=0, date=get_current_datetime()).save()
 
@@ -92,10 +93,11 @@ def get_customers(request):
 @require_POST
 def update_customers(request):
     customers = api.send_request('crm', 'api/data')
-    # TODO: Try to catch bad response form the send_request, when CRM is down
 
+    # TODO: do not delete CRM is down
     Customer.objects.all().delete()
 
+    # TODO: store last updated time when empty database
     # Save dummy row in case of empty response from CRM, to store last updated time
     # Customer(firstName='', lastName='', fidelityPoint=0, payment=0, account='', date=get_current_datetime()).save()
 

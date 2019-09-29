@@ -148,7 +148,7 @@ def schedule_task(host, url, time, recurrence, data, source, name):
 def schedule_task_simple(task, recurrence):
     clock_time = api.send_request('scheduler', 'clock/time')
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
-    time = time + timedelta(seconds=10)
+    time = time + timedelta(hours=1)
     schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', task)
 
 # END UTILS FUNCTIONS.

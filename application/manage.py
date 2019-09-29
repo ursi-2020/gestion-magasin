@@ -8,7 +8,6 @@ myappurl = "http://localhost:" + os.environ["WEBSERVER_PORT"]
 
 
 def main():
-    print("OOOOOOOOOOOOOOO")
     api.unregister(os.environ['DJANGO_APP_NAME'])
     api.register(myappurl, os.environ['DJANGO_APP_NAME'])
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')

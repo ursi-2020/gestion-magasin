@@ -9,5 +9,5 @@
 
 # Rôle de l'application
 
-Le rôle de ... est de ... dans le système d'information.
-etc.
+Le rôle de `Magasin` est de s'occuper de toutes les activités spécifiques à un magasin, comme la gestion d'un stock magasin
+et son réapprovisionnement, les promotions locales, la mise à disposition de ressources pour le bon fonctionnement de `Caisse`.

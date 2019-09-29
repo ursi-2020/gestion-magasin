@@ -1,62 +1,9 @@
 # Gestion Magasin
 
-### GET /products/
-Response: JSON Array
-```
-[
-  {
-    "id": 796,
-    "codeProduit": "X1-0",
-    "familleProduit": "Frigos",
-    "descriptionProduit": "Frigos:P1-0",
-    "prix": 424
-  },
-  [...]
-  {
-    "id": 803,
-    "codeProduit": "X1-10",
-    "familleProduit": "TV",
-    "descriptionProduit": "TV:P3-10",
-    "prix": 2624
-  }
-]
-```
+Welcome to the `Gestion Magasin` GitHub repo.
 
-### GET /customers/
-Response: JSON Array
-```
-[
-  {
-    "id": 97,
-    "firstName": "Jean",
-    "lastName": "Eddison-18",
-    "fidelityPoint": 0,
-    "payment": 0,
-    "account": "BKN1CST18"
-  },
-  [...]
-  {
-    "id": 99,
-    "firstName": "Anne",
-    "lastName": "Eddison-53",
-    "fidelityPoint": 154,
-    "payment": 3,
-    "account": "BKN1CST53"
-  }
-]
-```
+See full documentation of `Gestion Magasin` [here](https://ursi-2020.github.io/gestion-magasin/).
 
-### GET /customers/?account=<account_id>
-Response: JSON Object
+See full documentation of all applications [here](https://ursi-2020.github.io/Documentation/).
 
-##### Example: <br> GET /customers/?account=BKN1CST18
-```
-{
-  "id": 97,
-  "firstName": "Jean",
-  "lastName": "Eddison-18",
-  "fidelityPoint": 0,
-  "payment": 0,
-  "account": "BKN1CST18"
-}
-```
+Maintained by Group Abrial (Ines Bargach, Rudy Öcalan, Fernando Borja and Arnaud Henric).

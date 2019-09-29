@@ -16,3 +16,9 @@ class Customer(models.Model):
     account = models.CharField(max_length=10, default="")
     date = models.DateTimeField(null=True)
 
+class GlobalInfo(models.Model):
+    catalogue_is_up = models.BooleanField(default=True)
+    products_last_update = models.DateTimeField(null=True)
+
+    crm_is_up = models.BooleanField(default=True)
+    customers_last_update = models.DateTimeField(null=True)

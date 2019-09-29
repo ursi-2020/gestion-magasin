@@ -5,3 +5,4 @@ wheel
 requests
 pika
 git+git://github.com/ursi-2020/technical-base-package.git@master#egg=apipkg==0.0.4
+django-fontawesome-5

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'application.djangoapp.apps.ApplicationConfig',
     'application',
+    'fontawesome_5',
 ]
 
 MIDDLEWARE = [

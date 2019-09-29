@@ -5,9 +5,10 @@ from apipkg import api_manager as api
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
-from application.djangoapp.models import Produit, Customer
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
+
+from .models import Produit, Customer, GlobalInfo
 
 
 # TODO: very good documentation
@@ -15,32 +16,25 @@ from django.views.decorators.http import require_http_methods, require_GET, requ
 
 # VIEWS FUNCTIONS:
 
-# Only shows the current data of the database, does not update it
+# Only shows the current data of the database, does not update it from remote apps
 @require_GET
 def index(request):
     products = Produit.objects.all().values()
     for product in products:
         product.update(prix=product['prix'] / 100)
 
-    try:
-        latest = Produit.objects.latest('date')
-        products_update_time = latest.date
-    except Produit.DoesNotExist:
-        products_update_time = ""
-
-    try:
-        latest = Customer.objects.latest('date')
-        customers_update_time = latest.date
-    except Customer.DoesNotExist:
-        customers_update_time = ""
+    global_info = GlobalInfo.objects.first()
 
     context = {
         'time': get_current_datetime().strftime("%Y-%m-%d %H:%M:%S"),
         'products': products,
         'customers': Customer.objects.all().values(),
-        'products_update_time': products_update_time,
-        'customers_update_time': customers_update_time
+        'products_update_time': global_info.products_last_update,
+        'catalogue_is_up': global_info.catalogue_is_up,
+        'customers_update_time': global_info.customers_last_update,
+        'crm_is_up': global_info.crm_is_up,
     }
+
     return render(request, 'index.html', context)
 
 
@@ -56,24 +50,22 @@ def get_products(request):
 def update_products(request):
     products = api.send_request('catalogue-produit', 'api/data')
 
-    # TODO: do not delete CATALOGUE is down
-    Produit.objects.all().delete()
-
-    # TODO: store last updated time when empty database
-    # Save dummy row in case of empty response from CATALOGUE, to store last updated time
-    # Produit(codeProduit='', familleProduit='', descriptionProduit='', prix=0, date=get_current_datetime()).save()
-
     try:
         data = json.loads(products)
+        Produit.objects.all().delete()
+        current_datetime = get_current_datetime()
+
         for product in data['produits']:
             p = Produit(codeProduit=product['codeProduit'],
                         familleProduit=product['familleProduit'],
                         descriptionProduit=product['descriptionProduit'],
                         prix=product['prix'],
-                        date=get_current_datetime()) # TODO: get current datetime only once
+                        date=current_datetime)
             p.save()
+
+        GlobalInfo.objects.update(products_last_update = current_datetime, catalogue_is_up=True)
     except json.JSONDecodeError:
-        pass
+        GlobalInfo.objects.update(catalogue_is_up = False)
 
     return HttpResponseRedirect('/')
 
@@ -94,28 +86,34 @@ def get_customers(request):
 def update_customers(request):
     customers = api.send_request('crm', 'api/data')
 
-    # TODO: do not delete CRM is down
-    Customer.objects.all().delete()
-
-    # TODO: store last updated time when empty database
-    # Save dummy row in case of empty response from CRM, to store last updated time
-    # Customer(firstName='', lastName='', fidelityPoint=0, payment=0, account='', date=get_current_datetime()).save()
-
     try:
         data = json.loads(customers)
+
+        Customer.objects.all().delete()
+        current_datetime = get_current_datetime()
+
         for customer in data:
             c = Customer(firstName=customer['firstName'],
                          lastName=customer['lastName'],
                          fidelityPoint=customer['fidelityPoint'],
                          payment=customer['payment'],
                          account=customer['account'],
-                         date=get_current_datetime()) # TODO: get current datetime only once
+                         date=current_datetime)
             c.save()
+
+        GlobalInfo.objects.update(customers_last_update = current_datetime, crm_is_up = True)
     except json.JSONDecodeError:
-        pass
+        GlobalInfo.objects.update(crm_is_up = False)
 
     return HttpResponseRedirect('/')
 
+@csrf_exempt
+@require_POST
+def clear_all_data(request):
+    Customer.objects.all().delete()
+    Produit.objects.all().delete()
+
+    return HttpResponseRedirect('/')
 
 # END VIEWS FUNCTIONS.
 #####################

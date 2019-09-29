@@ -70,7 +70,7 @@ def update_products(request):
                         familleProduit=product['familleProduit'],
                         descriptionProduit=product['descriptionProduit'],
                         prix=product['prix'],
-                        date=get_current_datetime())
+                        date=get_current_datetime()) # TODO: get current datetime only once
             p.save()
     except json.JSONDecodeError:
         pass
@@ -109,7 +109,7 @@ def update_customers(request):
                          fidelityPoint=customer['fidelityPoint'],
                          payment=customer['payment'],
                          account=customer['account'],
-                         date=get_current_datetime())
+                         date=get_current_datetime()) # TODO: get current datetime only once
             c.save()
     except json.JSONDecodeError:
         pass

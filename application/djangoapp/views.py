@@ -14,6 +14,9 @@ from .models import Produit, Customer, GlobalInfo
 # TODO: very good documentation
 # TODO: html page for 404
 
+# TODO: Save all received data in one shot, to avoid partial rendering of data in middle of processing
+# TODO: See if it is possible to deserialize received data directly into objects without specifying attributes
+
 # VIEWS FUNCTIONS:
 
 # Only shows the current data of the database, does not update it from remote apps

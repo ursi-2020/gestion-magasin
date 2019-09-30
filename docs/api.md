@@ -1,6 +1,7 @@
-[Sommaire](https://ursi-2020.github.io/Documentation/)
+[Sommaire SI](https://ursi-2020.github.io/Documentation/) <br/>
+[Sommaire Magasin](https://ursi-2020.github.io/gestion-magasin/)
 
-Go to: [Endpoints](#endpoints), [Models](#models).
+Go to: [Endpoints](#i---endpoints), [Models](#ii---models).
 
 ## I - ENDPOINTS
 

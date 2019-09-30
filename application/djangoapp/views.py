@@ -147,10 +147,10 @@ def schedule_task(host, url, time, recurrence, data, source, name):
     return r.text
 
 
-def schedule_task_simple(task, recurrence):
+def schedule_task_simple(name, task, recurrence):
     clock_time = api.send_request('scheduler', 'clock/time')
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
-    time = time + timedelta(hours=1)
-    schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', task)
+    time = time + timedelta(minutes=5)
+    schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
 
 # END UTILS FUNCTIONS.

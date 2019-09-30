@@ -14,5 +14,5 @@ class ApplicationConfig(AppConfig):
                 GlobalInfo().save()
 
             from .views import schedule_task_simple
-            schedule_task_simple('/products/update/', 'day')
-            schedule_task_simple('/customers/update/', 'day')
+            schedule_task_simple('Magasin: Update Products', '/products/update/', 'minute')
+            schedule_task_simple('Magasin: Update Customers', '/customers/update/', 'minute')

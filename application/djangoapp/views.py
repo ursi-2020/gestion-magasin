@@ -53,17 +53,17 @@ def update_products(request):
     try:
         data = json.loads(products)
         Produit.objects.all().delete()
-        current_datetime = get_current_datetime()
 
         for product in data['produits']:
             p = Produit(codeProduit=product['codeProduit'],
                         familleProduit=product['familleProduit'],
                         descriptionProduit=product['descriptionProduit'],
-                        prix=product['prix'],
-                        date=current_datetime)
+                        quantiteMin=product['quantiteMin'],
+                        packaging=product['packaging'],
+                        prix=product['prix'])
             p.save()
 
-        GlobalInfo.objects.update(products_last_update = current_datetime, catalogue_is_up=True)
+        GlobalInfo.objects.update(products_last_update = get_current_datetime(), catalogue_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(catalogue_is_up = False)
 
@@ -90,18 +90,17 @@ def update_customers(request):
         data = json.loads(customers)
 
         Customer.objects.all().delete()
-        current_datetime = get_current_datetime()
 
         for customer in data:
-            c = Customer(firstName=customer['firstName'],
+            c = Customer(idClient=customer['idClient'],
+                         firstName=customer['firstName'],
                          lastName=customer['lastName'],
                          fidelityPoint=customer['fidelityPoint'],
                          payment=customer['payment'],
-                         account=customer['account'],
-                         date=current_datetime)
+                         account=customer['account'])
             c.save()
 
-        GlobalInfo.objects.update(customers_last_update = current_datetime, crm_is_up = True)
+        GlobalInfo.objects.update(customers_last_update = get_current_datetime(), crm_is_up = True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(crm_is_up = False)
 

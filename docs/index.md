@@ -1,9 +1,8 @@
-[Sommaire](https://ursi-2020.github.io/Documentation/)
+[Sommaire SI](https://ursi-2020.github.io/Documentation/)
 
 # Sections
 
 * [API](api.md)
-* [Communication](communication.md)
 * [Flux](flux.md)
 * [Use Case](use-case.md)
 
@@ -11,3 +10,20 @@
 
 Le rôle de `Magasin` est de s'occuper de toutes les activités spécifiques à un magasin, comme la gestion d'un stock magasin
 et son réapprovisionnement, les promotions locales, la mise à disposition de ressources pour le bon fonctionnement de `Caisse`.
+
+# Utilisation de l'application
+
+## Sprint 1
+
+Pour ce premier sprint, la page d'accueil de l'application présente les référentiels PRODUIT et CLIENT actuellement présentes dans la base de donnée de l'application.
+
+Au démarrage du serveur, 2 tâches sont lancées et ont pour but de mettre à jour automatiquement quotidiennement ces référentiels depuis les applications CATALOGUE et CRM.
+
+![](dashboard.png)
+
+Depuis le tableau de bord, il est possible de:
+- supprimer toutes les données de la base de donnée
+- synchroniser manuellement le référentiel PRODUIT depuis CATALOGUE
+- synchroniser manuellement le référentiel CLIENT depuis CRM
+- voir si les applications CATALOGUE et CRM sont hors ligne/en ligne
+- voir la dernière heure de synchronisation de chaque référentiel

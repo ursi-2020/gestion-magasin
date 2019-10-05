@@ -12,7 +12,7 @@ et son réapprovisionnement, les promotions locales, la mise à disposition de r
 
 # Use Case
 
-*[Anciennes versions des Uses Cases](usecasemagasin.png)*
+*[Anciennes versions des Uses Cases](use-case.md)*
 ![](gm-usecase2.png)
 
 

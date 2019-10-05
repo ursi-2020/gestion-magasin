@@ -4,7 +4,6 @@
 
 * [API](api.md)
 * [Flux](flux.md)
-* [Use Case](use-case.md)
 
 # Rôle de l'application
 

@@ -65,6 +65,8 @@ Get one or all customers information
 Name | Type | Required | Description
 ---- | ---- | ---- | ----
 account | String | No | Account ID of the requested client
+firstName| String | No | Firstname of the requested client
+lastName | String | No | Lastname of the requested client
 
 ---
 

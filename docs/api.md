@@ -126,6 +126,19 @@ Code | Content Type | Value | Parameter
 Customer 'LOL' does not exist.
 ```
 
+---
+`GET /customers?firstName=Jean&lastName=Eddison-18`
+```json
+{
+  "id": 97,
+  "firstName": "Jean",
+  "lastName": "Eddison-18",
+  "fidelityPoint": 0,
+  "payment": 0,
+  "account": "BKN1CST18"
+}
+```
+---
 <br/>
 
 ## II - MODELS 

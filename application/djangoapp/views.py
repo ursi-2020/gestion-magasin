@@ -51,8 +51,7 @@ def get_products(request):
 @csrf_exempt
 @require_POST
 def update_products(request):
-    products = api.send_request('catalogue-produit', 'api/data')
-
+    products = api.send_request('catalogue-produit', 'api/get-magasin')
     try:
         data = json.loads(products)
         Produit.objects.all().delete()

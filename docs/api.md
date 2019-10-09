@@ -65,6 +65,8 @@ Get one or all customers information
 Name | Type | Required | Description
 ---- | ---- | ---- | ----
 account | String | No | Account ID of the requested client
+firstName| String | No | Firstname of the requested client
+lastName | String | No | Lastname of the requested client
 
 ---
 
@@ -124,6 +126,19 @@ Code | Content Type | Value | Parameter
 Customer 'LOL' does not exist.
 ```
 
+---
+`GET /customers?firstName=Jean&lastName=Eddison-18`
+```json
+{
+  "id": 97,
+  "firstName": "Jean",
+  "lastName": "Eddison-18",
+  "fidelityPoint": 0,
+  "payment": 0,
+  "account": "BKN1CST18"
+}
+```
+---
 <br/>
 
 ## II - MODELS 

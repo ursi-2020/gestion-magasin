@@ -77,8 +77,14 @@ def update_products(request):
 @require_GET
 def get_customers(request):
     account_id = request.GET.get('account')
+    name = request.GET.get('firstName')
+    lastname = request.GET.get('lastName')
     if account_id:
         return get_customer(account_id)
+    elif name:
+        return get_customer(name)
+    elif lastname:
+        return get_customer(lastname)
     else:
         customers = list(Customer.objects.all().values())
     return JsonResponse(customers, safe=False)
@@ -95,12 +101,12 @@ def update_customers(request):
         Customer.objects.all().delete()
 
         for customer in data:
-            c = Customer(idClient=customer['idClient'],
-                         firstName=customer['firstName'],
-                         lastName=customer['lastName'],
-                         fidelityPoint=customer['fidelityPoint'],
-                         payment=customer['payment'],
-                         account=customer['account'])
+            c = Customer(idClient=customer['id'],
+                         firstName=customer['Nom'],
+                         lastName=customer['Prenom'],
+                         fidelityPoint=customer['Credit'],
+                         payment=customer['Paiement'],
+                         account=customer['Compte'])
             c.save()
 
         GlobalInfo.objects.update(customers_last_update = get_current_datetime(), crm_is_up = True)
@@ -117,11 +123,13 @@ def clear_all_data(request):
 
     return HttpResponseRedirect('/')
 
+
+#def getClientProducts()
 # END VIEWS FUNCTIONS.
 #####################
 # UTILS FUNCTIONS:
 
-def get_customer(user_id):
+def get_customer(user_id, name, lastname):
     try:
         customer = Customer.objects.get(account=user_id)
     except Customer.DoesNotExist:

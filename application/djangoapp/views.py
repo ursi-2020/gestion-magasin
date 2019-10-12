@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 
-from .models import Produit, Customer, GlobalInfo
+from .models import Produit, Client, GlobalInfo
 
 
 # TODO: very good documentation
@@ -31,7 +31,7 @@ def index(request):
     context = {
         'time': get_current_datetime().strftime("%Y-%m-%d %H:%M:%S"),
         'products': products,
-        'customers': Customer.objects.all().values(),
+        'customers': Client.objects.all().values(),
         'products_update_time': global_info.products_last_update,
         'catalogue_is_up': global_info.catalogue_is_up,
         'customers_update_time': global_info.customers_last_update,
@@ -85,7 +85,7 @@ def get_customers(request):
     elif lastname:
         return get_customer(lastname)
     else:
-        customers = list(Customer.objects.all().values())
+        customers = list(Client.objects.all().values())
     return JsonResponse(customers, safe=False)
 
 
@@ -97,15 +97,15 @@ def update_customers(request):
     try:
         data = json.loads(customers)
 
-        Customer.objects.all().delete()
+        Client.objects.all().delete()
 
         for customer in data:
-            c = Customer(idClient=customer['id'],
-                         firstName=customer['Nom'],
-                         lastName=customer['Prenom'],
-                         fidelityPoint=customer['Credit'],
-                         payment=customer['Paiement'],
-                         account=customer['Compte'])
+            c = Client(idClient=customer['id'],
+                         prenom=customer['Prenom'],
+                         nom=customer['Nom'],
+                         ptsFidelite=customer['Credit'],
+                         paiement=customer['Paiement'],
+                         compte=customer['Compte'])
             c.save()
 
         GlobalInfo.objects.update(customers_last_update = get_current_datetime(), crm_is_up = True)
@@ -117,21 +117,23 @@ def update_customers(request):
 @csrf_exempt
 @require_POST
 def clear_all_data(request):
-    Customer.objects.all().delete()
+    Client.objects.all().delete()
     Produit.objects.all().delete()
 
     return HttpResponseRedirect('/')
 
 
-#def getClientProducts()
 # END VIEWS FUNCTIONS.
 #####################
 # UTILS FUNCTIONS:
 
+#Todo a tester
 def get_customer(user_id, name, lastname):
     try:
-        customer = Customer.objects.get(account=user_id)
-    except Customer.DoesNotExist:
+        customer = (Client.objects.get(account=user_id) |
+                    Client.objects.get(firstName=name)  &
+                    Client.objects.get(lastname=lastname))
+    except Client.DoesNotExist:
         return HttpResponseNotFound({"Customer '" + user_id + "' does not exist."})
     customer = model_to_dict(customer)
     return JsonResponse(customer, safe=False)
@@ -141,6 +143,9 @@ def get_current_datetime():
     clock_time = api.send_request('scheduler', 'clock/time').strip('"')
     return datetime.strptime(clock_time, '%d/%m/%Y-%H:%M:%S')
 
+
+def get_daily_format(date):
+    return datetime.strptime(date, '%d/%m/%Y')
 
 # Function to schedule a task
 def schedule_task(host, url, time, recurrence, data, source, name):

@@ -40,6 +40,9 @@ class GlobalInfo(models.Model):
     crm_is_up = models.BooleanField(default=True)
     customers_last_update = models.DateTimeField(null=True)
 
+    caisse_is_up = models.BooleanField(default=True)
+    tickets_last_update = models.DateTimeField(null=True)
+
 
 class Commande(models.Model):
     codeProduit = models.ForeignKey(Produit, on_delete=models.CASCADE)

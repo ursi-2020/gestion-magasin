@@ -15,7 +15,7 @@
     <nav class="navbar navbar-light bg-light">
     <h2> Magasin </h2>
     <a class="nav-link" href="/">Catalogue</a>
-    <a class="nav-link" href="daily_tickets">Ventes du jour</a>
+    <a class="nav-link" href="/daily_tickets">Ventes du jour</a>
     <div class="form-inline">
         <form action={% url
         'Clear All Data' %} method='POST'>
@@ -82,7 +82,7 @@
                             <td> {{ customer.prenom }}</td>
                             <td> {{ customer.compte }}</td>
                             <td> {{ customer.ptsFidelite }}</td>
-                            <td> {{ customer.paiement }}</td>
+                            <td> {{ customer.paiement }} </td>
                         </tr>
                         {% endfor %}
                         </tbody>

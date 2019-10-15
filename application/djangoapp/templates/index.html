@@ -1,6 +1,7 @@
+<!DOCTYPE html>
+
 {% load fontawesome_5 %}
 
-<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -13,6 +14,8 @@
 
         <nav class="navbar navbar-light bg-light">
             <h2> Magasin </h2>
+            <a class="nav-link" href="customers">Clients</a>
+            <a class="nav-link" href="daily_tickets">Ventes du jour</a>
             <div class="form-inline">
                 <form action={% url 'Clear All Data' %} method='POST'>
                     {% csrf_token %}
@@ -79,65 +82,6 @@
                                     <td> {{ product.quantiteMin }}</td>
                                     <td> {{ product.packaging }}</td>
                                     <td> {{ product.prix }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div style="flex: 0.03"></div>
-
-                <div style="flex: 1">
-                    <div style="display: flex">
-                        <h4 style="flex: 1">
-                            {% fa5_icon 'address-book' 'fas' %}
-                            Clients
-                        </h4>
-                        {% if crm_is_up %}
-                            <span class="badge badge-success" style="margin-right: 10px; align-self: center;">
-                            En ligne
-                        {% else %}
-                            <span class="badge badge-danger" style="margin-right: 10px; align-self: center;">
-                            Hors ligne
-                        {% endif %}
-                        </span>
-                        <span class="badge badge-light" style="margin-right: 10px; align-self: center;">
-                            Dernière synchronisation:
-                            <br>
-                            {% if customers_update_time %}
-                                {{ customers_update_time|date:'Y-m-d H:i:s' }}
-                            {% else %}
-                            jamais
-                            {% endif %}
-                        </span>
-                        <form action={% url 'Update Customers' %} method='POST'>
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-dark btn-sm">
-                                {% fa5_icon 'sync-alt' 'fas' %}
-                                Sync
-                            </button>
-                        </form>
-                    </div>
-                    <table class="table table-hover table-sm table-bordered">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">ID Client</th>
-                                <th scope="col">Nom</th>
-                                <th scope="col">Prénom</th>
-                                <th scope="col">Nº Compte</th>
-                                <th scope="col">Pts fidélité</th>
-                                <th scope="col">Paiements</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for customer in customers %}
-                                <tr>
-                                    <td> {{ customer.idClient }}</td>
-                                    <td> {{ customer.lastName }}</td>
-                                    <td> {{ customer.firstName }}</td>
-                                    <td> {{ customer.account }}</td>
-                                    <td> {{ customer.fidelityPoint }}</td>
-                                    <td> {{ customer.payment }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

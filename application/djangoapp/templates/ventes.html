@@ -13,7 +13,7 @@
  <nav class="navbar navbar-light bg-light">
     <h2> Magasin </h2>
     <a class="nav-link" href="/">Catalogue</a>
-    <a class="nav-link" href="my_customers">Clients</a>
+    <a class="nav-link" href="/customers">Clients</a>
     <div class="form-inline">
         <form action={% url
         'Clear All Data' %} method='POST'>
@@ -53,7 +53,7 @@
                             jamais
                             {% endif %}
                         </span>
-                        <form action={% url 'Update Tickets' %} method='POST'>
+                        <form action={% url 'Update tickets' %} method='POST'>
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-dark btn-sm">
                                 {% fa5_icon 'sync-alt' 'fas' %}

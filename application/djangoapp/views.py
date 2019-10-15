@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 
-from .models import Produit, Client, GlobalInfo
+from .models import Produit, Client, GlobalInfo, Ventes
 
 
 # TODO: very good documentation
@@ -65,9 +65,9 @@ def update_products(request):
                         prix=product['prix'])
             p.save()
 
-        GlobalInfo.objects.update(products_last_update = get_current_datetime(), catalogue_is_up=True)
+        GlobalInfo.objects.update(products_last_update=get_current_datetime(), catalogue_is_up=True)
     except json.JSONDecodeError:
-        GlobalInfo.objects.update(catalogue_is_up = False)
+        GlobalInfo.objects.update(catalogue_is_up=False)
 
     return HttpResponseRedirect('/')
 
@@ -78,6 +78,7 @@ def get_customers(request):
     account_id = request.GET.get('account')
     name = request.GET.get('firstName')
     lastname = request.GET.get('lastName')
+    global_info = GlobalInfo.objects.first()
     if account_id:
         return get_customer(account_id)
     elif name:
@@ -86,33 +87,86 @@ def get_customers(request):
         return get_customer(lastname)
     else:
         customers = list(Client.objects.all().values())
-    return JsonResponse(customers, safe=False)
+    context = {
+        'customers': customers,
+        'crm_is_up': global_info.crm_is_up,
+        'customers_update_time': global_info.customers_last_update,
+    }
+    return render(request, 'clients.html', context)
 
 
 @csrf_exempt
 @require_POST
 def update_customers(request):
     customers = api.send_request('crm', 'api/data')
-
+    global_info = GlobalInfo.objects.first()
     try:
         data = json.loads(customers)
 
         Client.objects.all().delete()
 
         for customer in data:
-            c = Client(idClient=customer['id'],
-                         prenom=customer['Prenom'],
-                         nom=customer['Nom'],
-                         ptsFidelite=customer['Credit'],
-                         paiement=customer['Paiement'],
-                         compte=customer['Compte'])
+            c = Client(idClient=customer['IdClient'],
+                       prenom=customer['Prenom'],
+                       nom=customer['Nom'],
+                       ptsFidelite=customer['Credit'],
+                       paiement=customer['Paiement'],
+                       compte=customer['Compte'])
             c.save()
 
-        GlobalInfo.objects.update(customers_last_update = get_current_datetime(), crm_is_up = True)
+        GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
     except json.JSONDecodeError:
-        GlobalInfo.objects.update(crm_is_up = False)
+        GlobalInfo.objects.update(crm_is_up=False)
+    cus = Client.objects.all().values()
+    context = {
+        'customers': cus,
+        'crm_is_up': global_info.crm_is_up,
+        'customers_update_time': global_info.customers_last_update,
+    }
+    return render(request, 'clients.html', context)
 
-    return HttpResponseRedirect('/')
+
+# For CAISSE
+@require_GET
+def get_tickets(request):
+    ventes = Ventes.objects.all().values()
+    global_info = GlobalInfo.objects.first()
+    context = {
+        'ventes': ventes,
+        'crm_is_up': global_info.crm_is_up,
+        'customers_update_time': global_info.customers_last_update,
+    }
+    return render(request, 'ventes.html', context)
+
+
+@csrf_exempt
+@require_POST
+def update_tickets(request):
+    # return render(request, 'index.html')
+    tickets = api.send_request('caisse', 'api/tickets')
+    global_info = GlobalInfo.objects.first()
+    try:
+        data = json.loads(tickets)
+        for t in data:
+            ticket = Ventes(date=t['date'],
+                            prix=t['prix'],
+                            client=t['client'],
+                            articles=t['articles'],
+                            pointsFidelite=t['pointsFidelite'],
+                            modePaiement=t['modePaiement'])
+            ticket.save()
+
+        GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+    except json.JSONDecodeError:
+        GlobalInfo.objects.update(caisse_is_up=False)
+    ventes = Ventes.objects.all().values()
+    context = {
+        'ventes': ventes,
+        'caisse_is_up': global_info.caisse_is_up,
+        'tickets_update_time': global_info.tickets_last_update,
+    }
+    return render(request, 'ventes.html', context)
+
 
 @csrf_exempt
 @require_POST
@@ -127,11 +181,11 @@ def clear_all_data(request):
 #####################
 # UTILS FUNCTIONS:
 
-#Todo a tester
+# Todo a tester
 def get_customer(user_id, name, lastname):
     try:
         customer = (Client.objects.get(account=user_id) |
-                    Client.objects.get(firstName=name)  &
+                    Client.objects.get(firstName=name) &
                     Client.objects.get(lastname=lastname))
     except Client.DoesNotExist:
         return HttpResponseNotFound({"Customer '" + user_id + "' does not exist."})
@@ -146,6 +200,7 @@ def get_current_datetime():
 
 def get_daily_format(date):
     return datetime.strptime(date, '%d/%m/%Y')
+
 
 # Function to schedule a task
 def schedule_task(host, url, time, recurrence, data, source, name):

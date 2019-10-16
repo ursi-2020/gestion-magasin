@@ -14,8 +14,18 @@
 
         <nav class="navbar navbar-light bg-light">
             <h2> Magasin </h2>
-            <a class="nav-link" href="customers">Clients</a>
-            <a class="nav-link" href="daily_tickets">Ventes du jour</a>
+            <form action={% url 'Get Customers' %} method='GET'>
+                    {% csrf_token %}
+                    <button class="btn btn-outline-secondary" type="submit">
+                        Clients
+                    </button>
+            </form>
+             <form action={% url 'Get daily tickets' %} method='GET'>
+                    {% csrf_token %}
+                    <button class="btn btn-outline-secondary" type="submit">
+                        Ventes du jour
+                    </button>
+            </form>
             <div class="form-inline">
                 <form action={% url 'Clear All Data' %} method='POST'>
                     {% csrf_token %}

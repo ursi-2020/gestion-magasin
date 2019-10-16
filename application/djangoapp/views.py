@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 
-from .models import Produit, Client, GlobalInfo, Ventes
+from .models import Produit, Client, GlobalInfo, Vente, Article
 
 
 # TODO: very good documentation
@@ -129,7 +129,9 @@ def update_customers(request):
 # For CAISSE
 @require_GET
 def get_tickets(request):
-    ventes = Ventes.objects.all().values()
+    ventes = Vente.objects.all().values()
+    for v in ventes:
+        v.update(prix=v['prix'] / 100)
     global_info = GlobalInfo.objects.first()
     context = {
         'ventes': ventes,
@@ -147,19 +149,27 @@ def update_tickets(request):
     global_info = GlobalInfo.objects.first()
     try:
         data = json.loads(tickets)
+        # print(data)
+        Vente.objects.all().delete()
         for t in data:
-            ticket = Ventes(date=t['date'],
+            ticket = Vente(date=t['date'],
                             prix=t['prix'],
                             client=t['client'],
-                            articles=t['articles'],
                             pointsFidelite=t['pointsFidelite'],
                             modePaiement=t['modePaiement'])
+                            # articles=t['articles'])
             ticket.save()
-
+            articles=[]
+            for article_dict in t['articles']:
+                article = Article(codeProduit=article_dict['codeProduit'], quantite=article_dict['quantity'])
+                article.save()
+                articles.append(article)
+            ticket.articles.add(article)
+            print(ticket.articles)
         GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(caisse_is_up=False)
-    ventes = Ventes.objects.all().values()
+    ventes = Vente.objects.all().values()
     context = {
         'ventes': ventes,
         'caisse_is_up': global_info.caisse_is_up,

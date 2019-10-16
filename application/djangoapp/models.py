@@ -19,16 +19,16 @@ class Client(models.Model):
     compte = models.CharField(max_length=10, default="")
 
 
-class ArticlesList(models.Model):
+class Article(models.Model):
     codeProduit = models.CharField(max_length=20, primary_key=True)
     quantite = models.IntegerField()
 
 
-class Ventes(models.Model):
+class Vente(models.Model):
     date = models.DateTimeField()
     prix = models.IntegerField()
     client = models.CharField(max_length=20)
-    articles = models.ManyToManyField(ArticlesList)
+    articles = models.ManyToManyField(Article)
     pointsFidelite = models.IntegerField()
     modePaiement = models.CharField(max_length=10)
 

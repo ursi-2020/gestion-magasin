@@ -86,12 +86,7 @@
                     {% for vente in ventes %}
                     <tr>
                         <td>
-                            <ul>
-                                {% for article in vente.articles %}
-                                <li> {{ article.codeProduit }}</li>
-                                <li> {{ article.quantité }}</li>
-                                {% endfor %}
-                            </ul>
+                            {{ vente.articles }}
                         </td>
                         <td> {{ vente.date }}</td>
                         <td> {{ vente.prix }}</td>

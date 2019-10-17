@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 
-from .models import Produit, Client, GlobalInfo, Vente, Article
+from .models import *
 
 
 # TODO: very good documentation
@@ -144,28 +144,24 @@ def get_tickets(request):
 @csrf_exempt
 @require_POST
 def update_tickets(request):
-    # return render(request, 'index.html')
     tickets = api.send_request('caisse', 'api/tickets')
     global_info = GlobalInfo.objects.first()
     try:
         data = json.loads(tickets)
-        # print(data)
-        Vente.objects.all().delete()
-        for t in data:
-            ticket = Vente(date=t['date'],
-                            prix=t['prix'],
-                            client=t['client'],
-                            pointsFidelite=t['pointsFidelite'],
-                            modePaiement=t['modePaiement'])
-                            # articles=t['articles'])
-            ticket.save()
-            articles=[]
-            for article_dict in t['articles']:
-                article = Article(codeProduit=article_dict['codeProduit'], quantite=article_dict['quantity'])
+        Vente.objects.all().delete()  # TODO: only keep today's tickets (or ...)
+        for ticket in data:
+            vente = Vente(date=ticket['date'],
+                          prix=ticket['prix'],
+                          client=ticket['client'],
+                          pointsFidelite=ticket['pointsFidelite'],
+                          modePaiement=ticket['modePaiement'])
+            vente.save()
+            # for article_dict in ticket['articles']:
+            #     article = ProduitVendu(codeProduit=article_dict['codeProduit'],
+            #                            vente=vente
+            #                       quantite=article_dict['quantity'])
                 article.save()
-                articles.append(article)
-            ticket.articles.add(article)
-            print(ticket.articles)
+                vente.articles.add(article)
         GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(caisse_is_up=False)

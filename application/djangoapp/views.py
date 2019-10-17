@@ -156,16 +156,18 @@ def update_tickets(request):
                           pointsFidelite=ticket['pointsFidelite'],
                           modePaiement=ticket['modePaiement'])
             vente.save()
-            # for article_dict in ticket['articles']:
-            #     article = ProduitVendu(codeProduit=article_dict['codeProduit'],
-            #                            vente=vente
-            #                       quantite=article_dict['quantity'])
+            for article_dict in ticket['articles']:
+                tmp = Produit.objects.get(pk=article_dict['codeProduit'])
+                article = ProduitVendu(codeProduit=tmp,
+                                       vente=vente,
+                                       quantiteVendu=article_dict['quantity'])
                 article.save()
-                vente.articles.add(article)
+                vente.produits.add(article)
         GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(caisse_is_up=False)
-    ventes = Vente.objects.all().values()
+    ventes = Vente.objects.all()
+    print(ventes[1].produits)
     context = {
         'ventes': ventes,
         'caisse_is_up': global_info.caisse_is_up,

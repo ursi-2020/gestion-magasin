@@ -30,9 +30,9 @@ class Vente(models.Model):
 
 
 class ProduitVendu(models.Model):
-    codeProduit = models.ForeignKey(Produit, on_delete=models.CASCADE)
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
-    quantiteVendu = models.IntegerField()
+    quantite = models.IntegerField()
 
 class Commande(models.Model):
     codeProduit = models.ForeignKey(Produit, on_delete=models.CASCADE)

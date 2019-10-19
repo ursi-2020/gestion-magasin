@@ -123,7 +123,7 @@ def update_customers(request):
         'crm_is_up': global_info.crm_is_up,
         'customers_update_time': global_info.customers_last_update,
     }
-    return render(request, 'clients.html', context)
+    return HttpResponseRedirect('/daily_tickets')
 
 
 # For CAISSE
@@ -157,17 +157,15 @@ def update_tickets(request):
                           modePaiement=ticket['modePaiement'])
             vente.save()
             for article_dict in ticket['articles']:
-                tmp = Produit.objects.get(pk=article_dict['codeProduit'])
-                article = ProduitVendu(codeProduit=tmp,
+                tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
+                article = ProduitVendu(produit=tmp,
                                        vente=vente,
-                                       quantiteVendu=article_dict['quantity'])
+                                       quantite=article_dict['quantity'])
                 article.save()
-                vente.produits.add(article)
         GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(caisse_is_up=False)
     ventes = Vente.objects.all()
-    print(ventes[1].produits)
     context = {
         'ventes': ventes,
         'caisse_is_up': global_info.caisse_is_up,

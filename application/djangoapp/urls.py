@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     # TODO: differenciate api endpoints from html endpoints
+    # TODO: specify methods for each endpoint
 
     path('api/sales', views.get_sales_data, name='Get Sales Data'),
 

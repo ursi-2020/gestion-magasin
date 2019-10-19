@@ -10,7 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.forms.models import model_to_dict
 
-
 from .models import *
 
 
@@ -57,17 +56,18 @@ def update_products(request):
     products = api.send_request('catalogue-produit', 'api/get-magasin')
     try:
         data = json.loads(products)
-        Produit.objects.all().delete()
 
         for product in data['produits']:
-            p = Produit(codeProduit=product['codeProduit'],
-                        familleProduit=product['familleProduit'],
-                        descriptionProduit=product['descriptionProduit'],
-                        quantiteMin=product['quantiteMin'],
-                        packaging=product['packaging'],
-                        prix=product['prix'])
-            p.save()
-
+            Produit.objects.update_or_create(
+                codeProduit=product['codeProduit'],
+                defaults={
+                    'familleProduit': product['familleProduit'],
+                    'descriptionProduit': product['descriptionProduit'],
+                    'quantiteMin': product['quantiteMin'],
+                    'packaging': product['packaging'],
+                    'prix': product['prix']
+                }
+            )
         GlobalInfo.objects.update(products_last_update=get_current_datetime(), catalogue_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(catalogue_is_up=False)
@@ -126,7 +126,7 @@ def update_customers(request):
         'crm_is_up': global_info.crm_is_up,
         'customers_update_time': global_info.customers_last_update,
     }
-    return HttpResponseRedirect('/customers')
+    return render(request, 'clients.html', context)
 
 
 # For CAISSE

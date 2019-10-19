@@ -1,12 +1,15 @@
-import requests, json
-
-from django.http import *
-from apipkg import api_manager as api
-from django.shortcuts import render
-from django.forms.models import model_to_dict
-from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
-from django.views.decorators.http import require_http_methods, require_GET, require_POST
+
+import json
+import requests
+from apipkg import api_manager as api
+from django.forms.models import model_to_dict
+from django.http import *
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET, require_POST
+from django.forms.models import model_to_dict
+
 
 from .models import *
 
@@ -123,7 +126,7 @@ def update_customers(request):
         'crm_is_up': global_info.crm_is_up,
         'customers_update_time': global_info.customers_last_update,
     }
-    return HttpResponseRedirect('/daily_tickets')
+    return HttpResponseRedirect('/customers')
 
 
 # For CAISSE
@@ -158,7 +161,7 @@ def update_tickets(request):
             vente.save()
             for article_dict in ticket['articles']:
                 tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
-                article = ProduitVendu(produit=tmp,
+                article = ArticleVendu(article=tmp,
                                        vente=vente,
                                        quantite=article_dict['quantity'])
                 article.save()
@@ -172,6 +175,20 @@ def update_tickets(request):
         'tickets_update_time': global_info.tickets_last_update,
     }
     return render(request, 'ventes.html', context)
+
+
+def get_sales_data(request):
+    ventes_set = Vente.objects.all()
+    ventes = []
+
+    for vente_obj in ventes_set:
+        vente = model_to_dict(vente_obj)
+        vente['articles'] = []
+        for article_obj in vente_obj.articles.all():
+            vente['articles'].append(model_to_dict(article_obj))
+        ventes.append(vente)
+
+    return JsonResponse(ventes, safe=False)
 
 
 @csrf_exempt
@@ -208,22 +225,10 @@ def get_daily_format(date):
     return datetime.strptime(date, '%d/%m/%Y')
 
 
-# Function to schedule a task
-def schedule_task(host, url, time, recurrence, data, source, name):
-    time_str = time.strftime('%d/%m/%Y-%H:%M:%S')
-    headers = {'Host': 'scheduler'}
-    data = {"target_url": url, "target_app": host, "time": time_str, "recurrence": recurrence, "data": data,
-            "source_app": source, "name": name}
-    r = requests.post(api.api_services_url + 'schedule/add', headers=headers, json=data)
-    print(r.status_code)
-    print(r.text)
-    return r.text
-
-
 def schedule_task_simple(name, task, recurrence):
     clock_time = api.send_request('scheduler', 'clock/time')
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
     time = time + timedelta(minutes=5)
-    schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
+    api.schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
 
 # END UTILS FUNCTIONS.

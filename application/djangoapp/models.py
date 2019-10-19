@@ -1,16 +1,6 @@
 from django.db import models
 
 
-class Produit(models.Model):
-    codeProduit = models.CharField(max_length=200, primary_key=True)
-    familleProduit = models.CharField(max_length=200)
-    descriptionProduit = models.CharField(max_length=200)
-    quantiteMin = models.PositiveIntegerField(default=0)
-    stock = models.PositiveIntegerField(default=0)
-    packaging = models.PositiveIntegerField(default=0)
-    prix = models.PositiveIntegerField(default=0)
-
-
 class Client(models.Model):
     idClient = models.TextField(blank=False, default="")
     prenom = models.CharField(max_length=200)
@@ -20,23 +10,37 @@ class Client(models.Model):
     compte = models.CharField(max_length=10, default="")
 
 
+class Produit(models.Model):
+    codeProduit = models.CharField(max_length=200, primary_key=True)
+    familleProduit = models.CharField(max_length=200)
+    descriptionProduit = models.CharField(max_length=200)
+    quantiteMin = models.PositiveIntegerField(default=0)
+    packaging = models.PositiveIntegerField(default=0)
+    prix = models.PositiveIntegerField(default=0)
+    exclusivite = models.CharField(max_length=10, default=0)
+
+    stock = models.PositiveIntegerField(default=0)
+
+
 class Vente(models.Model):
     date = models.DateTimeField()
     prix = models.IntegerField()
     client = models.CharField(max_length=20)
-    produits = models.ManyToManyField(Produit, through='ProduitVendu')
     pointsFidelite = models.IntegerField()
     modePaiement = models.CharField(max_length=10)
+    articles = models.ManyToManyField(Produit, through='ArticleVendu')
 
 
-class ProduitVendu(models.Model):
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
+class ArticleVendu(models.Model):
+    article = models.ForeignKey(Produit, on_delete=models.CASCADE)
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
     quantite = models.IntegerField()
+
 
 class Commande(models.Model):
     codeProduit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     quantite = models.IntegerField()
+
 
 class GlobalInfo(models.Model):
     catalogue_is_up = models.BooleanField(default=True)
@@ -47,4 +51,3 @@ class GlobalInfo(models.Model):
 
     caisse_is_up = models.BooleanField(default=True)
     tickets_last_update = models.DateTimeField(null=True)
-

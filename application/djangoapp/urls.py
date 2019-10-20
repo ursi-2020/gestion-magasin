@@ -18,8 +18,8 @@ urlpatterns = [
     path('customers/', views.get_customers, name='Get Customers'),
     path('customers/update/', views.update_customers, name='Update Customers'),
 
-    path('sales/', views.get_tickets, name='Get daily sales'),
-    path('sales/update/', views.update_tickets, name='Update sales'),
+    path('sales/', views.get_tickets, name='Get Sales'),
+    path('sales/update/', views.update_tickets, name='Update Sales'),
 
-    path('clear_all_data/', views.clear_all_data, name='Clear All Data'),
+    path('clear_data/', views.clear_data, name='Clear Data'),
 ]

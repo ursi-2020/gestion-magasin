@@ -28,7 +28,7 @@
             </form>
             <div class="form-inline">
                 <form action={% url
-                'Clear All Data' %} method='POST'>
+                'Clear Data' %} method='POST'>
                 {% csrf_token %}
                 <button class="btn btn-outline-danger btn-sm" type="submit">
                     {% fa5_icon 'trash' 'fas' %}
@@ -65,7 +65,8 @@
                                     jamais
                                     {% endif %}
                                 </span>
-                                <form action={% url 'Update tickets' %} method='POST'>
+                                <form action={% url
+                                'Update Sales' %} method='POST'>
                                 <button type="submit" class="btn btn-outline-dark btn-sm">
                                     {% fa5_icon 'sync-alt' 'fas' %}
                                     Sync

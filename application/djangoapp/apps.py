@@ -20,8 +20,9 @@ class ApplicationConfig(AppConfig):
             if not global_info:
                 GlobalInfo().save()
 
-            if os.environ['ENV'] == 'dev':
-                api.post_request(host='scheduler', url='/app/delete?source=gestion-magasin', body={})
+            if 'ENV' in os.environ:
+                if os.environ['ENV'] == 'dev':
+                    api.post_request(host='scheduler', url='/app/delete?source=gestion-magasin', body={})
 
             from .views import schedule_task_simple
             schedule_task_simple('Magasin: Update Products', '/products/update/', 'day')

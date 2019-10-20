@@ -186,7 +186,7 @@ def get_sales_data(request):
 
 @csrf_exempt
 @require_POST
-def clear_all_data(request):
+def clear_data(request):
     Client.objects.all().delete()
     Produit.objects.all().delete()
 

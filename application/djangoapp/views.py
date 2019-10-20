@@ -18,31 +18,31 @@ from .models import *
 
 # TODO: See if it is possible to deserialize received data directly into objects without specifying attributes
 
-# VIEWS FUNCTIONS:
+# VIEWS FUNCTIONS
 
-# Only shows the current data of the database, does not update it from remote apps
 @require_GET
 def index(request):
-    products = Produit.objects.all().values()
-    for product in products:
-        product.update(prix=product['prix'] / 100)
-
-    global_info = GlobalInfo.objects.first()
-
-    context = {
-        'time': get_current_datetime().strftime("%Y-%m-%d %H:%M:%S"),
-        'products': products,
-        'customers': Client.objects.all().values(),
-        'products_update_time': global_info.products_last_update,
-        'catalogue_is_up': global_info.catalogue_is_up,
-        'customers_update_time': global_info.customers_last_update,
-        'crm_is_up': global_info.crm_is_up,
-    }
-
-    return render(request, 'index.html', context)
+    return show_products(request)
 
 
-# For CAISSE
+@csrf_exempt
+@require_POST
+def clear_data(request):
+    Client.objects.all().delete()
+    Produit.objects.all().delete()
+    Vente.objects.all().delete()
+
+    GlobalInfo.objects.filter().update(
+        products_last_update=None,
+        customers_last_update=None,
+        tickets_last_update=None
+    )
+
+    return HttpResponseRedirect('/')
+
+
+# PRODUCTS
+
 @require_GET
 def get_products(request):
     products = list(Produit.objects.all().values())
@@ -74,27 +74,35 @@ def update_products(request):
     return HttpResponseRedirect('/')
 
 
-# For CAISSE
+@require_GET
+def show_products(request):
+    products = Produit.objects.all().values()
+    for product in products:
+        product.update(prix=product['prix'] / 100)
+    return render(request, 'products.html', create_context(products))
+
+
+# END PRODUCTS
+
+# CUSTOMERS
+
+@require_GET
+def show_customers(request):
+    customers = list(Client.objects.all().values())
+    return render(request, 'customers.html', create_context(customers))
+
+
 @require_GET
 def get_customers(request):
     account_id = request.GET.get('account')
     name = request.GET.get('firstName')
     lastname = request.GET.get('lastName')
-    global_info = GlobalInfo.objects.first()
-    if account_id:
-        return get_customer(account_id)
-    elif name:
-        return get_customer(name)
-    elif lastname:
-        return get_customer(lastname)
-    else:
-        customers = list(Client.objects.all().values())
-    context = {
-        'customers': customers,
-        'crm_is_up': global_info.crm_is_up,
-        'customers_update_time': global_info.customers_last_update,
-    }
-    return render(request, 'clients.html', context)
+
+    if account_id or name or lastname:
+        return get_customer(account_id, name, lastname)
+
+    customers = list(Client.objects.all().values())
+    return JsonResponse(customers, safe=False)
 
 
 @csrf_exempt
@@ -122,55 +130,20 @@ def update_customers(request):
     return HttpResponseRedirect('/customers')
 
 
-# For CAISSE
+# END CUSTOMERS
+
+# SALES
+
 @require_GET
-def get_tickets(request):
+def show_sales(request):
     ventes = Vente.objects.all().values()
     for v in ventes:
         v.update(prix=v['prix'] / 100)
-    global_info = GlobalInfo.objects.first()
-    context = {
-        'ventes': ventes,
-        'crm_is_up': global_info.crm_is_up,
-        'customers_update_time': global_info.customers_last_update,
-    }
-    return render(request, 'ventes.html', context)
+    return render(request, 'sales.html', create_context(ventes))
 
 
-@csrf_exempt
-@require_POST
-def update_tickets(request):
-    tickets = api.send_request('caisse', 'api/tickets')
-    global_info = GlobalInfo.objects.first()
-    try:
-        data = json.loads(tickets)
-        Vente.objects.all().delete()  # TODO: only keep today's tickets (or ...)
-        for ticket in data:
-            vente = Vente(date=ticket['date'],
-                          prix=ticket['prix'],
-                          client=ticket['client'],
-                          pointsFidelite=ticket['pointsFidelite'],
-                          modePaiement=ticket['modePaiement'])
-            vente.save()
-            for article_dict in ticket['articles']:
-                tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
-                article = ArticleVendu(article=tmp,
-                                       vente=vente,
-                                       quantite=article_dict['quantity'])
-                article.save()
-        GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
-    except json.JSONDecodeError:
-        GlobalInfo.objects.update(caisse_is_up=False)
-    ventes = Vente.objects.all()
-    context = {
-        'ventes': ventes,
-        'caisse_is_up': global_info.caisse_is_up,
-        'tickets_update_time': global_info.tickets_last_update,
-    }
-    return render(request, 'ventes.html', context)
-
-
-def get_sales_data(request):
+@require_GET
+def get_sales(request):
     ventes_set = Vente.objects.all()
     ventes = []
 
@@ -186,18 +159,37 @@ def get_sales_data(request):
 
 @csrf_exempt
 @require_POST
-def clear_data(request):
-    Client.objects.all().delete()
-    Produit.objects.all().delete()
+def update_sales(request):
+    sales = api.send_request('caisse', 'api/tickets')
+    try:
+        data = json.loads(sales)
 
-    return HttpResponseRedirect('/')
+        for sale in data:
+            vente = Vente(date=sale['date'],
+                          prix=sale['prix'],
+                          client=sale['client'],
+                          pointsFidelite=sale['pointsFidelite'],
+                          modePaiement=sale['modePaiement'])
+            vente.save()
+            for article_dict in sale['articles']:
+                tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
+                article = ArticleVendu(article=tmp,
+                                       vente=vente,
+                                       quantite=article_dict['quantity'])
+                article.save()
+        GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+    except json.JSONDecodeError:
+        GlobalInfo.objects.update(caisse_is_up=False)
+    return HttpResponseRedirect('/sales')
 
 
-# END VIEWS FUNCTIONS.
-#####################
-# UTILS FUNCTIONS:
+# END SALES
 
-# Todo a tester
+# END VIEWS FUNCTIONS
+#############################
+# UTILS FUNCTIONS
+
+# TODO: a tester
 def get_customer(user_id, name, lastname):
     try:
         customer = (Client.objects.get(account=user_id) |
@@ -207,6 +199,15 @@ def get_customer(user_id, name, lastname):
         return HttpResponseNotFound({"Customer '" + user_id + "' does not exist."})
     customer = model_to_dict(customer)
     return JsonResponse(customer, safe=False)
+
+
+def create_context(value):
+    context = {
+        'context': value,
+        'time': get_current_datetime().strftime("%Y-%m-%d %H:%M:%S"),
+        'global_info': GlobalInfo.objects.first()
+    }
+    return context
 
 
 def get_current_datetime():
@@ -224,4 +225,4 @@ def schedule_task_simple(name, task, recurrence):
     time = time + timedelta(minutes=5)
     api.schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
 
-# END UTILS FUNCTIONS.
+# END UTILS FUNCTIONS

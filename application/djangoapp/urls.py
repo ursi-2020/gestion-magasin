@@ -7,19 +7,21 @@ urlpatterns = [
     # TODO: specify methods for each endpoint
 
     # API
-    path('api/sales', views.get_sales_data, name='Get Sales Data'),
+    path('api/products/', views.get_products, name='Get Products'),
+    path('api/customers/', views.get_products, name='Get Customers'),
+    path('api/sales/', views.get_sales, name='Get Sales'),
 
     # HTML
     path('', views.index, name='index'),
 
-    path('products/', views.get_products, name='Get Products'),
+    path('products/', views.show_products, name='Show Products'),
     path('products/update/', views.update_products, name='Update Products'),
 
-    path('customers/', views.get_customers, name='Get Customers'),
+    path('customers/', views.show_customers, name='Show Customers'),
     path('customers/update/', views.update_customers, name='Update Customers'),
 
-    path('sales/', views.get_tickets, name='Get Sales'),
-    path('sales/update/', views.update_tickets, name='Update Sales'),
+    path('sales/', views.show_sales, name='Show Sales'),
+    path('sales/update/', views.update_sales, name='Update Sales'),
 
     path('clear_data/', views.clear_data, name='Clear Data'),
 ]

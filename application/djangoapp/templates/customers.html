@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% load fontawesome_5 %}
+
+{% block content %}
+<div style="display: flex">
+    <div style="flex: 1">
+        <div style="display: flex">
+            <h4 style="flex: 1">
+                {% fa5_icon 'address-book' 'fas' %}
+                Clients
+            </h4>
+            {% if global_info.crm_is_up %}
+            <span class="badge badge-success" style="margin-right: 10px; align-self: center;">
+                En ligne
+            </span>
+            {% else %}
+            <span class="badge badge-danger" style="margin-right: 10px; align-self: center;">
+                Hors ligne
+                {% endif %}
+            </span>
+            <span class="badge badge-light" style="margin-right: 10px; align-self: center;">
+                Dernière synchronisation:
+                <br>
+                {% if global_info.customers_last_update %}
+                {{ global_info.customers_last_update|date:'Y-m-d H:i:s' }}
+                {% else %}
+                jamais
+                {% endif %}
+            </span>
+            <form action="{% url 'Update Customers' %}" method='POST'>
+                <button type="submit" class="btn btn-outline-dark btn-sm">
+                    {% fa5_icon 'sync-alt' 'fas' %}
+                    Sync
+                </button>
+            </form>
+        </div>
+        <table class="table table-hover table-sm table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">ID Client</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nº Compte</th>
+                    <th scope="col">Pts fidélité</th>
+                    <th scope="col">Paiements</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in context %}
+                <tr>
+                    <td> {{ customer.idClient }}</td>
+                    <td> {{ customer.nom }}</td>
+                    <td> {{ customer.prenom }}</td>
+                    <td> {{ customer.compte }}</td>
+                    <td> {{ customer.ptsFidelite }}</td>
+                    <td> {{ customer.paiement }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

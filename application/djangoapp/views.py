@@ -16,7 +16,6 @@ from .models import *
 # TODO: very good documentation
 # TODO: html page for 404
 
-# TODO: Save all received data in one shot, to avoid partial rendering of data in middle of processing
 # TODO: See if it is possible to deserialize received data directly into objects without specifying attributes
 
 # VIEWS FUNCTIONS:
@@ -102,31 +101,25 @@ def get_customers(request):
 @require_POST
 def update_customers(request):
     customers = api.send_request('crm', 'api/data')
-    global_info = GlobalInfo.objects.first()
     try:
         data = json.loads(customers)
 
-        Client.objects.all().delete()
-
         for customer in data:
-            c = Client(idClient=customer['IdClient'],
-                       prenom=customer['Prenom'],
-                       nom=customer['Nom'],
-                       ptsFidelite=customer['Credit'],
-                       paiement=customer['Paiement'],
-                       compte=customer['Compte'])
-            c.save()
-
+            Client.objects.update_or_create(
+                idClient=customer['IdClient'],
+                prenom=customer['Prenom'],
+                nom=customer['Nom'],
+                defaults={
+                    'ptsFidelite': customer['Credit'],
+                    'paiement': customer['Paiement'],
+                    'compte': customer['Compte']
+                }
+            )
         GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(crm_is_up=False)
-    cus = Client.objects.all().values()
-    context = {
-        'customers': cus,
-        'crm_is_up': global_info.crm_is_up,
-        'customers_update_time': global_info.customers_last_update,
-    }
-    return render(request, 'clients.html', context)
+
+    return HttpResponseRedirect('/customers')
 
 
 # For CAISSE

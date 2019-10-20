@@ -1,6 +1,17 @@
 from django.db import models
 
 
+class GlobalInfo(models.Model):
+    catalogue_is_up = models.BooleanField(default=True)
+    products_last_update = models.DateTimeField(null=True)
+
+    crm_is_up = models.BooleanField(default=True)
+    customers_last_update = models.DateTimeField(null=True)
+
+    caisse_is_up = models.BooleanField(default=True)
+    tickets_last_update = models.DateTimeField(null=True)
+
+
 class Client(models.Model):
     idClient = models.TextField(blank=False, default="")
     prenom = models.CharField(max_length=200)
@@ -38,16 +49,11 @@ class ArticleVendu(models.Model):
 
 
 class Commande(models.Model):
-    codeProduit = models.ForeignKey(Produit, on_delete=models.PROTECT)
+    date = models.DateTimeField()
+    articles = models.ManyToManyField(Produit, through='ArticleCommande')
+
+
+class ArticleCommande(models.Model):
+    article = models.ForeignKey(Produit, on_delete=models.PROTECT)
+    commande = models.ForeignKey(Commande, on_delete=models.PROTECT)
     quantite = models.IntegerField()
-
-
-class GlobalInfo(models.Model):
-    catalogue_is_up = models.BooleanField(default=True)
-    products_last_update = models.DateTimeField(null=True)
-
-    crm_is_up = models.BooleanField(default=True)
-    customers_last_update = models.DateTimeField(null=True)
-
-    caisse_is_up = models.BooleanField(default=True)
-    tickets_last_update = models.DateTimeField(null=True)

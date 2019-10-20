@@ -3,9 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # TODO: differenciate api endpoints from html endpoints
-    # TODO: specify methods for each endpoint
-
     # API
     path('api/products/', views.get_products, name='Get Products'),
     path('api/customers/', views.get_products, name='Get Customers'),

@@ -164,6 +164,9 @@ def update_sales(request):
     try:
         data = json.loads(sales)
 
+        ArticleVendu.objects.all().delete()
+        Vente.objects.all().delete()
+
         for sale in data:
             vente = Vente(date=sale['date'],
                           prix=sale['prix'],
@@ -184,6 +187,30 @@ def update_sales(request):
 
 
 # END SALES
+
+# def get_reapro(request):
+#     ventes = Vente.objects.filter(date=get_current_datetime())
+#     for article in ventes['articles']:
+#         article_new = Produit.objects.get(codeProduit=article.codeProduit)
+#         quantite = ventes['articles'].count(codeProduit=article_new.codeProduit)
+#         quantite *= 2
+#         article_commande = ArticleCommande(article=article_new,
+#                                            quantite=quantite)
+#         article_commande.save()
+#
+#     # produits = Produit.objects.filter(codeProduit=ventes.codeProduit)
+#     #
+#     # ArticleVendu.objects.all().update(quantite=F('quantite') * 2)
+#     # produitsVendus = ArticleVendu.objects.all().values()
+#     # ArticleVendu.objects.all().update(quantite=F('quantite') / 2)
+#     # commande = []
+#     # #for c in produitsVendus:
+#
+#
+#
+#     headers = {'Host': 'gestion-commerciale'}
+#     r = requests.post(api.api_services_url + 'place-order', headers=headers, json=produitsVendus)
+#     return JsonResponse(produitsVendus, safe=False)
 
 # END VIEWS FUNCTIONS
 #############################

@@ -2,6 +2,8 @@
 
 {% load fontawesome_5 %}
 
+{% load custom_filters %}
+
 {% block content %}
 <div style="display: flex">
     <div style="flex: 1">
@@ -45,12 +47,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for vente in context %}
+                {% for vente in context.ventes %}
                 <tr>
                     <td>
                         <ul>
-                            {% for produit in vente.produits.all %}
-                            <li> {{ produit.codeProduit }}</li>
+                            {% for article in vente.articles.all %}
+                            <li> {{ vente|quantity:article }} {{ article.codeProduit }}</li>
                             {% endfor %}
                         </ul>
                     </td>

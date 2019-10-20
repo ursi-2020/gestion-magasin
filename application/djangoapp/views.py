@@ -22,6 +22,7 @@ from .models import *
 
 @require_GET
 def index(request):
+    print(Vente.objects.first().articles.all())
     return show_products(request)
 
 
@@ -29,6 +30,8 @@ def index(request):
 @require_POST
 def clear_data(request):
     Client.objects.all().delete()
+
+    ArticleVendu.objects.all().delete()
     Produit.objects.all().delete()
     Vente.objects.all().delete()
 
@@ -76,9 +79,9 @@ def update_products(request):
 
 @require_GET
 def show_products(request):
-    products = Produit.objects.all().values()
+    products = Produit.objects.all()
     for product in products:
-        product.update(prix=product['prix'] / 100)
+        product.prix = product.prix / 100
     return render(request, 'products.html', create_context(products))
 
 
@@ -136,10 +139,13 @@ def update_customers(request):
 
 @require_GET
 def show_sales(request):
-    ventes = Vente.objects.all().values()
-    for v in ventes:
-        v.update(prix=v['prix'] / 100)
-    return render(request, 'sales.html', create_context(ventes))
+    ventes = Vente.objects.all()
+    for vente in ventes:
+        vente.prix = vente.prix / 100
+    return render(request, 'sales.html', create_context({
+        'ventes': ventes,
+        'articles_vendus': ArticleVendu.objects.all()
+    }))
 
 
 @require_GET
@@ -168,18 +174,20 @@ def update_sales(request):
         Vente.objects.all().delete()
 
         for sale in data:
-            vente = Vente(date=sale['date'],
-                          prix=sale['prix'],
-                          client=sale['client'],
-                          pointsFidelite=sale['pointsFidelite'],
-                          modePaiement=sale['modePaiement'])
-            vente.save()
+            vente = Vente.objects.create(
+                date=sale['date'],
+                prix=sale['prix'],
+                client=sale['client'],
+                pointsFidelite=sale['pointsFidelite'],
+                modePaiement=sale['modePaiement']
+            )
             for article_dict in sale['articles']:
                 tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
-                article = ArticleVendu(article=tmp,
-                                       vente=vente,
-                                       quantite=article_dict['quantity'])
-                article.save()
+                ArticleVendu.objects.create(
+                    article=tmp,
+                    vente=vente,
+                    quantite=article_dict['quantity']
+                )
         GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(caisse_is_up=False)

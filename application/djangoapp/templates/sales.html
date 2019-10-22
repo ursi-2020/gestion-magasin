@@ -40,27 +40,28 @@
         <table class="table table-hover table-sm table-bordered">
             <thead class="thead-light">
                 <tr>
-                    <th scope="col">Références produits</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Prix (en €)</th>
+                    <th scope="col">Références produits</th>
+                    <th scope="col">Quantité vendue</th>
                     <th scope="col">Client</th>
+                    <th scope="col">Prix (en €)</th>
                 </tr>
             </thead>
             <tbody>
                 {% for vente in context.ventes %}
+                {% for article in vente.articles.all %}
                 <tr>
-                    <td>
-                        <ul>
-                            {% for article in vente.articles.all %}
-                            <li> {{ vente|quantity:article }} {{ article.codeProduit }}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                    <td> {{ vente.date }}</td>
-                    <td> {{ vente.prix }}</td>
-                    <td> {{ vente.client }}</td>
-                
+                    {% if forloop.first %}
+                    <td rowspan="{{ vente.articles.count }}"> {{ vente.date }}</td>
+                    {% endif %}
+                    <td> {{ article.codeProduit }}</td>
+                    <td> {{ vente|quantity:article }}</td>
+                    {% if forloop.first %}
+                    <td rowspan="{{ vente.articles.count }}"> {{ vente.client }}</td>
+                    <td rowspan="{{ vente.articles.count }}"> {{ vente.prix }}</td>
+                    {% endif %}
                 </tr>
+                {% endfor %}
                 {% endfor %}
             </tbody>
         </table>

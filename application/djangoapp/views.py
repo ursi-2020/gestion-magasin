@@ -199,17 +199,16 @@ def update_sales(request):
         GlobalInfo.objects.update(caisse_is_up=False)
     return HttpResponseRedirect('/sales')
 
-
-def get_commandes(request):
-    commandes = list(Commande.objects.all().values())
-    return JsonResponse(commandes, safe=False)
-
-
 # END SALES
 # Todo : changer les noms de variables
 
+@require_GET
+def show_orders(request):
+    orders = Commande.objects.all()
+    return render(request, 'orders.html', create_context(orders))
+
 @csrf_exempt
-# @require_POST
+@require_POST
 def request_restock(request):
     articles_vendus = ArticleVendu.objects.all()
     article_commandes = {}
@@ -243,8 +242,10 @@ def request_restock(request):
     headers = {'Host': 'gestion-commerciale'}
 
     r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
-    return HttpResponseRedirect('/sales')
 
+    # TODO: check if we received all the products
+
+    return HttpResponseRedirect('/orders')
 
 @require_GET
 def get_reapro(request):

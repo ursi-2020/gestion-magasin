@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-{% load fontawesome_5 %}
+<!--{% load fontawesome_5 %}-->
 
 <html lang="en">
     <head>
@@ -11,8 +11,6 @@
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
-        {% fontawesome_5_static %}
-    
     </head>
     <body style="margin:20px">
         
@@ -39,6 +37,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'Show Sales' %}">
                             Ventes du jour
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Show Orders' %}">
+                            Commandes passées
                         </a>
                     </li>
                 </ul>

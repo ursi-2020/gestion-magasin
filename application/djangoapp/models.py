@@ -50,7 +50,8 @@ class ArticleVendu(models.Model):
 
 
 class Commande(models.Model):
-   # date = models.DateTimeField(null=True)
+    date = models.DateTimeField(null=True)
+    # TODO: status attribute, etc...
     articles = models.ManyToManyField(Produit, through='ArticleCommande')
 
 

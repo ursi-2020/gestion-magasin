@@ -31,6 +31,8 @@ def clear_data(request):
     Client.objects.all().delete()
 
     ArticleVendu.objects.all().delete()
+    ArticleCommande.objects.all().delete()
+    Commande.objects.all().delete()
     Produit.objects.all().delete()
     Vente.objects.all().delete()
 
@@ -96,7 +98,7 @@ def show_customers(request):
 
 @require_GET
 def get_customers(request):
-    #Changer nom en français
+    # Changer nom en français
     carteFid = request.GET.get('carteFid')
     name = request.GET.get('firstName')
     lastname = request.GET.get('lastName')
@@ -124,7 +126,7 @@ def update_customers(request):
                     'ptsFidelite': customer['Credit'],
                     'paiement': customer['Paiement'],
                     'compte': customer['Compte'],
-                    'carteFid' : customer['carteFid']
+                    'carteFid': customer['carteFid']
                 }
             )
         GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
@@ -153,6 +155,9 @@ def show_sales(request):
 def get_sales(request):
     ventes_set = Vente.objects.all()
     ventes = []
+
+    ArticleVendu.objects.all().delete()
+    Vente.objects.all().delete()
 
     for vente_obj in ventes_set:
         vente = model_to_dict(vente_obj)
@@ -195,47 +200,57 @@ def update_sales(request):
     return HttpResponseRedirect('/sales')
 
 
+def get_commandes(request):
+    commandes = list(Commande.objects.all().values())
+    return JsonResponse(commandes, safe=False)
+
+
 # END SALES
 # Todo : changer les noms de variables
 
 @csrf_exempt
-@require_POST
+# @require_POST
 def request_restock(request):
-    ventes_set = ArticleVendu.objects.all()
-    commande = Commande()
-    commande.save()
-    for vente_obj in ventes_set:
-        article_new = Produit.objects.get(codeProduit=vente_obj.article.codeProduit)
-        quantite = ArticleVendu.objects.filter(article_id=article_new.codeProduit).count()
-        quantite *= 2
-        articleCommande = ArticleCommande.objects.create(
-            article=article_new,
-            quantite=quantite,
+    articles_vendus = ArticleVendu.objects.all()
+    article_commandes = {}
+
+    for article_vendu in articles_vendus:
+        if str(article_vendu.article_id) in article_commandes:
+            article_commandes[str(article_vendu.article_id)] += article_vendu.quantite
+        else:
+            article_commandes[str(article_vendu.article_id)] = article_vendu.quantite
+
+    commande = Commande.objects.create(date=get_current_datetime())
+
+    produits_body = []
+
+    for code_produit, quantite in article_commandes.items():
+        ArticleCommande.objects.create(
+            article=Produit.objects.get(codeProduit=code_produit),
             commande=commande,
+            quantite=(quantite * 2)
         )
-        articleCommande.save()
-    commandes = Commande.objects.all()
-    commandeEnvoyer = []
-    for commande in commandes:
-        articles = []
-        articleCommande_objs = ArticleCommande.objects.filter(commande_id=commande.id)
-        for obj in articleCommande_objs:
-            articles.append({"codeProduit": obj.article_id,
-                             "quantite" : obj.quantite})
-        commandeEnvoyer.append({"idCommande" : commande.id , "Produits " : articles})
-        res = json.dumps(commandeEnvoyer, indent=4)
-        print(res)
-        commandeEnvoyer = []
-        headers = {'Host': 'gestion-commerciale'}
-        r = requests.post(api.api_services_url + 'place-order', headers=headers, json=res)
+        produits_body.append({
+            'codeProduit': code_produit,
+            'quantite': (quantite * 2)
+        })
 
+    request_body = {
+        'idCommande': commande.id,
+        'Produits': produits_body
+    }
 
+    headers = {'Host': 'gestion-commerciale'}
+
+    r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
     return HttpResponseRedirect('/sales')
+
 
 @require_GET
 def get_reapro(request):
     commande = list(ArticleCommande.objects.all().values())
     return JsonResponse(commande, safe=False)
+
 
 # END VIEWS FUNCTIONS
 #############################
@@ -245,8 +260,8 @@ def get_reapro(request):
 def get_customer(carteFid, name, lastname):
     try:
         customer = (Client.objects.get(carteFid=carteFid))
-                   # Client.objects.get(firstName=name) &
-                   # Client.objects.get(lastname=lastname))
+        # Client.objects.get(firstName=name) &
+        # Client.objects.get(lastname=lastname))
     except Client.DoesNotExist:
         return HttpResponseNotFound({"Customer '" + carteFid + "' does not exist."})
     customer = model_to_dict(customer)

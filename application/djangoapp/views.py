@@ -97,12 +97,12 @@ def show_customers(request):
 @require_GET
 def get_customers(request):
     #Changer nom en français
-    account_id = request.GET.get('account')
+    carteFid = request.GET.get('carteFid')
     name = request.GET.get('firstName')
     lastname = request.GET.get('lastName')
 
-    if account_id or name or lastname:
-        return get_customer(account_id, name, lastname)
+    if carteFid or name or lastname:
+        return get_customer(carteFid, name, lastname)
 
     customers = list(Client.objects.all().values())
     return JsonResponse(customers, safe=False)
@@ -225,7 +225,6 @@ def request_restock(request):
         commandeEnvoyer.append({"idCommande" : commande.id , "Produits " : articles})
         res = json.dumps(commandeEnvoyer, indent=4)
         print(res)
-        print("stop")
         headers = {'Host': 'gestion-commerciale'}
         r = requests.post(api.api_services_url + 'place-order', headers=headers, json=res)
 
@@ -241,13 +240,13 @@ def get_reapro(request):
 # UTILS FUNCTIONS
 
 # TODO: a tester
-def get_customer(user_id, name, lastname):
+def get_customer(carteFid, name, lastname):
     try:
-        customer = (Client.objects.get(compte=user_id))
+        customer = (Client.objects.get(carteFid=carteFid))
                    # Client.objects.get(firstName=name) &
                    # Client.objects.get(lastname=lastname))
     except Client.DoesNotExist:
-        return HttpResponseNotFound({"Customer '" + user_id + "' does not exist."})
+        return HttpResponseNotFound({"Customer '" + carteFid + "' does not exist."})
     customer = model_to_dict(customer)
     return JsonResponse(customer, safe=False)
 

@@ -194,21 +194,39 @@ def update_sales(request):
 
 
 # END SALES
+# Todo : changer les noms de variables
 
-#@require_POST
+@csrf_exempt
+@require_POST
 #def request_restock(request):
-#    ventes = Vente.objects.filter(date=get_current_datetime())
-#    for article in ventes['articles']:
-#        article_new = Produit.objects.get(codeProduit=article.codeProduit)
-#        quantite = ventes['articles'].count(codeProduit=article_new.codeProduit)
-#        quantite *= 2
-#        article_commande = ArticleCommande(article=article_new,
-#                                           quantite=quantite)
-#        article_commande.save()
-#
-#    headers = {'Host': 'gestion-commerciale'}
-#    r = requests.post(api.api_services_url + 'place-order', headers=headers, json=produitsVendus)
-#    return HttpResponseRedirect('/')
+    # ventes_set = ArticleVendu.objects.all()
+    # commande = Commande()
+    # commande.save()
+    # for vente_obj in ventes_set:
+    #     article_new = Produit.objects.get(codeProduit=vente_obj.article.codeProduit)
+    #     quantite = ArticleVendu.objects.filter(article_id=article_new.codeProduit).count()
+    #     quantite *= 2
+    #     articleCommande = ArticleCommande.objects.create(
+    #         article=article_new,
+    #         quantite=quantite,
+    #         commande=commande,
+    #     )
+    #     articleCommande.save()
+    # commandes = Commande.objects.all()
+    # for commande in commandes:
+    #     produits_list = model_to_dict(commande)
+    #
+    # print(produits_list)
+    # produits_list = list(produits_list)
+    # print(produits_list)
+    # headers = {'Host': 'gestion-commerciale'}
+    # r = requests.post(api.api_services_url + 'place-order', headers=headers, json=produits_list)
+    # return HttpResponseRedirect('/sales')
+
+@require_GET
+def get_reapro(request):
+    commande = list(ArticleCommande.objects.all().values())
+    return JsonResponse(commande, safe=False)
 
 # END VIEWS FUNCTIONS
 #############################

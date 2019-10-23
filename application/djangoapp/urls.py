@@ -20,5 +20,7 @@ urlpatterns = [
     path('sales/', views.show_sales, name='Show Sales'),
     path('sales/update/', views.update_sales, name='Update Sales'),
 
+    path('restock/', views.request_restock, name='Get Reapro'),
+
     path('clear_data/', views.clear_data, name='Clear Data'),
 ]

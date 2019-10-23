@@ -49,7 +49,7 @@ class ArticleVendu(models.Model):
 
 
 class Commande(models.Model):
-    date = models.DateTimeField(null=True)
+   # date = models.DateTimeField(null=True)
     articles = models.ManyToManyField(Produit, through='ArticleCommande')
 
 

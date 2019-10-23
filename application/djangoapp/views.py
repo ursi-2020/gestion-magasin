@@ -222,14 +222,13 @@ def request_restock(request):
         for obj in articleCommande_objs:
             articles.append({"codeProduit": obj.article_id,
                              "quantite" : obj.quantite})
-        #Send to GesCo
         commandeEnvoyer.append({"idCommande" : commande.id , "Produits " : articles})
-        commandeEnvoyer.append(articles)
-    produits_list = list(commandeEnvoyer)
-    res = JsonResponse(produits_list, safe=False)
-    print(res.content)
-    headers = {'Host': 'gestion-commerciale'}
-    r = requests.post(api.api_services_url + 'place-order', headers=headers, json=produits_list)
+        res = json.dumps(commandeEnvoyer, indent=4)
+        print(res)
+        print("stop")
+        headers = {'Host': 'gestion-commerciale'}
+        r = requests.post(api.api_services_url + 'place-order', headers=headers, json=res)
+
     return HttpResponseRedirect('/sales')
 
 @require_GET

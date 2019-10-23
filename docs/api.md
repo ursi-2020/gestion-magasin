@@ -30,7 +30,7 @@ Code | Content Type | Value | Parameter
 
 #### *Usages:*
 
-`GET /product`
+`GET /api/product`
 ```json
 [
   {
@@ -51,7 +51,7 @@ Code | Content Type | Value | Parameter
 ```
 <br/>
 
-### GET `/customers`
+### GET `/api/customers`
 
 ---
 
@@ -64,9 +64,9 @@ Get one or all customers information
 
 Name | Type | Required | Description
 ---- | ---- | ---- | ----
-account | String | No | Account ID of the requested client
-firstName| String | No | Firstname of the requested client
-lastName | String | No | Lastname of the requested client
+carteFid | String | No | Account ID of the requested client
+prenom| String | No | Firstname of the requested client
+nom | String | No | Lastname of the requested client
 
 ---
 
@@ -82,7 +82,7 @@ Code | Content Type | Value | Parameter
 
 #### *Usages:*
 
-`GET /customers`
+`GET /api/customers`
 ```json
 [
   {
@@ -107,7 +107,7 @@ Code | Content Type | Value | Parameter
 ---
 
 
-`GET /customers?account=BKN1CST18`
+`GET /customers?carteFid=BKN1CST18`
 ```json
 {
   "id": 97,
@@ -121,24 +121,98 @@ Code | Content Type | Value | Parameter
 
 ---
 
-`GET /customers?account=LOL`
+`GET /customers?carteFid=LOL`
 ```
 Customer 'LOL' does not exist.
 ```
 
 ---
-`GET /customers?firstName=Jean&lastName=Eddison-18`
+`GET /customers?prenom=Jean&nom=Eddison-33`
 ```json
-{
+[{
   "id": 97,
   "firstName": "Jean",
   "lastName": "Eddison-18",
   "fidelityPoint": 0,
   "payment": 0,
   "account": "BKN1CST18"
-}
+}]
 ```
 ---
+
+`GET /customers?prenom=Jean&nom=Smith`
+```json
+[{
+  "id": 97,
+  "idClient": "DFF3"
+  "prenom": "Jean",
+  "nom": "Smith",
+  "ptsFidelite": 0,
+  "paiement": 0,
+  "compte": "BKN1CST18"
+},
+{
+  "id": 982,
+  "idClient": "23FF",
+  "prenom": "Jean",
+  "nom": "Smith",
+  "ptsFidelite": 34,
+  "paiement": 0,
+  "compte": "BKN1CSR18"
+}]
+```
+
+### GET `/api/sales`
+
+---
+
+#### *Description:*
+Get all sales and their information
+
+---
+
+#### *Query Parameters:*
+
+No parameters
+
+---
+
+#### *Responses:*
+
+Code | Content Type | Value | Parameter
+---- | ------------ | ----- | ---------
+`200 OK` | `application/json` |  Array of [Sales](#sales) | *none*
+
+---
+
+#### *Usages:*
+
+`GET /api/sales`
+```json
+[
+  {
+    "id": 140, 
+    "date": "2019-10-23T21:07:53.809", 
+    "prix": 154, "client": "", 
+    "pointsFidelite": 0, 
+    "modePaiement": "CASH", 
+    "articles": 
+      [
+        {
+          "codeProduit": "X1-1", 
+          "familleProduit": "Console", 
+          "descriptionProduit": 
+          "Console:P3-1", 
+          "quantiteMin": 5, 
+          "packaging": 1, 
+          "prix": 154, 
+          "exclusivite": "0", 
+          "stock": 0
+         }
+       ]
+     }
+]
+```
 <br/>
 
 ## II - MODELS 

@@ -96,6 +96,7 @@ def show_customers(request):
 
 @require_GET
 def get_customers(request):
+    #Changer nom en français
     account_id = request.GET.get('account')
     name = request.GET.get('firstName')
     lastname = request.GET.get('lastName')
@@ -122,7 +123,8 @@ def update_customers(request):
                 defaults={
                     'ptsFidelite': customer['Credit'],
                     'paiement': customer['Paiement'],
-                    'compte': customer['Compte']
+                    'compte': customer['Compte'],
+                    'carteFid' : customer['carteFid']
                 }
             )
         GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
@@ -198,30 +200,37 @@ def update_sales(request):
 
 @csrf_exempt
 @require_POST
-#def request_restock(request):
-    # ventes_set = ArticleVendu.objects.all()
-    # commande = Commande()
-    # commande.save()
-    # for vente_obj in ventes_set:
-    #     article_new = Produit.objects.get(codeProduit=vente_obj.article.codeProduit)
-    #     quantite = ArticleVendu.objects.filter(article_id=article_new.codeProduit).count()
-    #     quantite *= 2
-    #     articleCommande = ArticleCommande.objects.create(
-    #         article=article_new,
-    #         quantite=quantite,
-    #         commande=commande,
-    #     )
-    #     articleCommande.save()
-    # commandes = Commande.objects.all()
-    # for commande in commandes:
-    #     produits_list = model_to_dict(commande)
-    #
-    # print(produits_list)
-    # produits_list = list(produits_list)
-    # print(produits_list)
-    # headers = {'Host': 'gestion-commerciale'}
-    # r = requests.post(api.api_services_url + 'place-order', headers=headers, json=produits_list)
-    # return HttpResponseRedirect('/sales')
+def request_restock(request):
+    ventes_set = ArticleVendu.objects.all()
+    commande = Commande()
+    commande.save()
+    for vente_obj in ventes_set:
+        article_new = Produit.objects.get(codeProduit=vente_obj.article.codeProduit)
+        quantite = ArticleVendu.objects.filter(article_id=article_new.codeProduit).count()
+        quantite *= 2
+        articleCommande = ArticleCommande.objects.create(
+            article=article_new,
+            quantite=quantite,
+            commande=commande,
+        )
+        articleCommande.save()
+    commandes = Commande.objects.all()
+    commandeEnvoyer = []
+    for commande in commandes:
+        articles = []
+        articleCommande_objs = ArticleCommande.objects.filter(commande_id=commande.id)
+        for obj in articleCommande_objs:
+            articles.append({"codeProduit": obj.article_id,
+                             "quantite" : obj.quantite})
+        #Send to GesCo
+        commandeEnvoyer.append({"idCommande" : commande.id , "Produits " : articles})
+        commandeEnvoyer.append(articles)
+    produits_list = list(commandeEnvoyer)
+    res = JsonResponse(produits_list, safe=False)
+    print(res.content)
+    headers = {'Host': 'gestion-commerciale'}
+    r = requests.post(api.api_services_url + 'place-order', headers=headers, json=produits_list)
+    return HttpResponseRedirect('/sales')
 
 @require_GET
 def get_reapro(request):
@@ -235,9 +244,9 @@ def get_reapro(request):
 # TODO: a tester
 def get_customer(user_id, name, lastname):
     try:
-        customer = (Client.objects.get(account=user_id) |
-                    Client.objects.get(firstName=name) &
-                    Client.objects.get(lastname=lastname))
+        customer = (Client.objects.get(compte=user_id))
+                   # Client.objects.get(firstName=name) &
+                   # Client.objects.get(lastname=lastname))
     except Client.DoesNotExist:
         return HttpResponseNotFound({"Customer '" + user_id + "' does not exist."})
     customer = model_to_dict(customer)

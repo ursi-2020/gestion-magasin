@@ -19,6 +19,7 @@ class Client(models.Model):
     ptsFidelite = models.DecimalField(default=0, max_digits=6, decimal_places=2)
     paiement = models.IntegerField(default=0)
     compte = models.CharField(max_length=10, default="")
+    carteFid = models.IntegerField(default=-1)
 
 
 class Produit(models.Model):

@@ -225,8 +225,10 @@ def request_restock(request):
         commandeEnvoyer.append({"idCommande" : commande.id , "Produits " : articles})
         res = json.dumps(commandeEnvoyer, indent=4)
         print(res)
+        commandeEnvoyer = []
         headers = {'Host': 'gestion-commerciale'}
         r = requests.post(api.api_services_url + 'place-order', headers=headers, json=res)
+
 
     return HttpResponseRedirect('/sales')
 

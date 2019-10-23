@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+<!--{% load fontawesome_5 %}-->
+
+{% load custom_filters %}
+
+{% block content %}
+<div style="display: flex">
+    <div style="flex: 1">
+        <div style="display: flex">
+            <h4 style="flex: 1">
+                {% fa5_icon 'address-book' 'fas' %}
+                Commandes passées à Gestion Commerciale
+            </h4>
+            <form action="{% url 'Make Order' %}" method='POST'>
+                <button type="submit" class="btn btn-outline-dark btn-sm">
+                    {% fa5_icon 'shooping-cart' 'fas' %}
+                    Commander
+                </button>
+            </form>
+        </div>
+        <table class="table table-hover table-sm table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">ID Commande</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Références produits</th>
+                    <th scope="col">Quantité commandée</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commande in context %}
+                {% for article in commande.articles.all %}
+                <tr>
+                    {% if forloop.first %}
+                    <td rowspan="{{ commande.articles.count }}"> {{ commande.id }}</td>
+                    <td rowspan="{{ commande.articles.count }}"> {{ commande.date }}</td>
+                    {% endif %}
+                    <td> {{ article.codeProduit }}</td>
+                    <td> {{ commande|quantity_ordered:article }}</td>
+                </tr>
+                {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

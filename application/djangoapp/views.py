@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.forms.models import model_to_dict
+from django.db.models import Q
 
 from .models import *
 
@@ -100,11 +101,11 @@ def show_customers(request):
 def get_customers(request):
     # Changer nom en français
     carteFid = request.GET.get('carteFid')
-    name = request.GET.get('firstName')
-    lastname = request.GET.get('lastName')
+    prenom = request.GET.get('prenom')
+    nom = request.GET.get('nom')
 
-    if carteFid or name or lastname:
-        return get_customer(carteFid, name, lastname)
+    if carteFid or prenom or nom:
+        return get_customer(carteFid, prenom, nom)
 
     customers = list(Client.objects.all().values())
     return JsonResponse(customers, safe=False)
@@ -156,9 +157,6 @@ def get_sales(request):
     ventes_set = Vente.objects.all()
     ventes = []
 
-    ArticleVendu.objects.all().delete()
-    Vente.objects.all().delete()
-
     for vente_obj in ventes_set:
         vente = model_to_dict(vente_obj)
         vente['articles'] = []
@@ -199,6 +197,7 @@ def update_sales(request):
         GlobalInfo.objects.update(caisse_is_up=False)
     return HttpResponseRedirect('/sales')
 
+
 # END SALES
 # Todo : changer les noms de variables
 
@@ -206,6 +205,7 @@ def update_sales(request):
 def show_orders(request):
     orders = Commande.objects.all()
     return render(request, 'orders.html', create_context(orders))
+
 
 @csrf_exempt
 @require_POST
@@ -247,6 +247,7 @@ def request_restock(request):
 
     return HttpResponseRedirect('/orders')
 
+
 @require_GET
 def get_reapro(request):
     commande = list(ArticleCommande.objects.all().values())
@@ -258,14 +259,12 @@ def get_reapro(request):
 # UTILS FUNCTIONS
 
 # TODO: a tester
-def get_customer(carteFid, name, lastname):
+def get_customer(carteFid, prenom, nom):
     try:
-        customer = (Client.objects.get(carteFid=carteFid))
-        # Client.objects.get(firstName=name) &
-        # Client.objects.get(lastname=lastname))
+        customer = Client.objects.filter(Q(carteFid=carteFid) | Q(prenom=prenom) | Q(nom=nom))
     except Client.DoesNotExist:
         return HttpResponseNotFound({"Customer '" + carteFid + "' does not exist."})
-    customer = model_to_dict(customer)
+    customer = list(customer.values())
     return JsonResponse(customer, safe=False)
 
 

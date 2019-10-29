@@ -12,15 +12,13 @@ et son réapprovisionnement, les promotions locales, la mise à disposition de r
 
 # Use Case
 
-*[Anciennes versions des Uses Cases](use-case.md)*
-![](images/gm-usecase.png)
+<!-- *[Anciennes versions des Uses Cases](use-case.md)* -->
+![](images/usecase.png)
 
 
 # Utilisation de l'application
 
-## Sprint 1
-
-Pour ce premier sprint, la page d'accueil de l'application présente les référentiels PRODUIT et CLIENT actuellement présentes dans la base de donnée de l'application.
+La page d'accueil de l'application Magasin présente les référentiels PRODUIT et CLIENT actuellement présentes dans la base de donnée de l'application.
 
 Au démarrage du serveur, 2 tâches sont lancées et ont pour but de mettre à jour automatiquement quotidiennement ces référentiels depuis les applications CATALOGUE et CRM.
 

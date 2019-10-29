@@ -2,32 +2,32 @@
 [Sommaire Magasin](https://ursi-2020.github.io/gestion-magasin/)
 
 
-![](consulterstocketpromoslocales.png)
+![](images/consulterstocketpromoslocales.png)
 
 ---
 
-![](copiecatalogue.png)
+![](images/copiecatalogue.png)
 
 ---
 
-![](retourclient.png)
+![](images/retourclient.png)
 
 ---
 
-![](reassort.png)
+![](images/reassort.png)
 
 ---
 
-![](recupptsfidelite.png)
+![](images/recupptsfidelite.png)
 
 ---
 
-![](majdespromos.png)
+![](images/majdespromos.png)
 
 ---
 
-![](envoyerticketcaisse.png)
+![](images/envoyerticketcaisse.png)
 
 ---
 
-![](donnerprixcaisse.png)
+![](images/donnerprixcaisse.png)

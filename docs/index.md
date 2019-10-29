@@ -13,7 +13,7 @@ et son réapprovisionnement, les promotions locales, la mise à disposition de r
 # Use Case
 
 *[Anciennes versions des Uses Cases](use-case.md)*
-![](gm-usecase.png)
+![](images/gm-usecase.png)
 
 
 # Utilisation de l'application
@@ -24,7 +24,7 @@ Pour ce premier sprint, la page d'accueil de l'application présente les référ
 
 Au démarrage du serveur, 2 tâches sont lancées et ont pour but de mettre à jour automatiquement quotidiennement ces référentiels depuis les applications CATALOGUE et CRM.
 
-![](dashboard.png)
+![](images/dashboard.png)
 
 Depuis le tableau de bord, il est possible de:
 - supprimer toutes les données de la base de donnée

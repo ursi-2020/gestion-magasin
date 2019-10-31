@@ -7,6 +7,9 @@ urlpatterns = [
     path('api/products/', views.get_products, name='Get Products'),
     path('api/customers/', views.get_customers, name='Get Customers'),
     path('api/sales/', views.get_sales, name='Get Sales'),
+    path('api/orders/', views.receive_order, name='Receive Order'),
+    #URL pour que GesCo poste les demandes de reapro
+    #URL pour que caisse poste les tickets
 
     # HTML
     path('', views.index, name='index'),

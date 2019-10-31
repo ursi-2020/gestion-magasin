@@ -253,6 +253,9 @@ def get_reapro(request):
     commande = list(ArticleCommande.objects.all().values())
     return JsonResponse(commande, safe=False)
 
+@require_POST
+def receive_order(request):
+    print("Receiving order")
 
 # END VIEWS FUNCTIONS
 #############################

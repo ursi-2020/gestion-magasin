@@ -7,18 +7,14 @@ Go to: [Endpoints](#i---endpoints), [Models](#ii---models).
 
 ### GET `/products`
 
----
 
 #### *Description:*
 Get all products and their information
 
----
 
 #### *Query Parameters:*
 
 No parameters
-
----
 
 #### *Responses:*
 
@@ -26,11 +22,9 @@ Code | Content Type | Value | Parameter
 ---- | ------------ | ----- | ---------
 `200 OK` | `application/json` |  Array of [Product](#product) | *none*
 
----
-
 #### *Usages:*
 
-`GET /api/product`
+### GET `/api/product`
 ```json
 [
   {
@@ -51,14 +45,12 @@ Code | Content Type | Value | Parameter
 ```
 <br/>
 
-### GET `/api/customers`
-
 ---
+
+### GET `/api/customers`
 
 #### *Description:*
 Get one or all customers information
-
----
 
 #### *Query Parameters:*
 
@@ -68,7 +60,6 @@ carteFid | String | No | Account ID of the requested client
 prenom| String | No | Firstname of the requested client
 nom | String | No | Lastname of the requested client
 
----
 
 #### *Responses:*
 
@@ -78,7 +69,6 @@ Code | Content Type | Value | Parameter
 `200 OK` | `application/json` | [Customer](#customer) | account
 `404 Not Found` | `text/html` | Error message "Customer not found" | account
 
----
 
 #### *Usages:*
 
@@ -161,29 +151,21 @@ Customer 'LOL' does not exist.
   "compte": "BKN1CSR18"
 }]
 ```
-
-### GET `/api/sales`
-
 ---
+### GET `/api/sales`
 
 #### *Description:*
 Get all sales and their information
 
----
-
 #### *Query Parameters:*
 
 No parameters
-
----
 
 #### *Responses:*
 
 Code | Content Type | Value | Parameter
 ---- | ------------ | ----- | ---------
 `200 OK` | `application/json` |  Array of [Sales](#sales) | *none*
-
----
 
 #### *Usages:*
 
@@ -213,6 +195,45 @@ Code | Content Type | Value | Parameter
      }
 ]
 ```
+---
+
+### GET `/api/order`
+
+
+#### *Description:*
+Route to post an order
+
+#### *Query Parameters:*
+
+No parameters
+
+#### *Responses:*
+
+Code | Content Type | Value | Parameter
+---- | ------------ | ----- | ---------
+`200 OK` | `application/json` | Object command | *none*
+
+#### *Usages:*
+
+`POST /api/order`
+
+body:
+```json
+{
+  "idCommande": 140,
+  "Produits": [
+              {
+                  "codeProduit": 3291,
+                  "quantite": 1,
+              },
+              {
+                  "codeProduit": 32,
+                  "quantite": 11,
+              },
+          ]
+   }
+```
+
 <br/>
 
 ## II - MODELS 
@@ -240,5 +261,17 @@ Code | Content Type | Value | Parameter
   "fidelityPoint": <INTEGER>,
   "payment": <INTEGER>,
   "account": <STRING>
+}
+```
+---
+### `Sale`
+```
+{
+  "date" : <DATE>,
+  "prix" : <INTEGER>,
+  "client" : <STRING>,
+  "pointsFidelite" : <INTEGER>,
+  "modePaiement" : <STRING>,
+  "articles" : <LIST(Produit)>
 }
 ```

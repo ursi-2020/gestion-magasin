@@ -134,8 +134,8 @@ Customer 'LOL' does not exist.
 ```json
 [{
   "id": 97,
-  "idClient": "DFF3"
-  "prenom": "Jean",
+  "idClient": "DFF3",
+  "prenom" : "Jean",
   "nom": "Smith",
   "ptsFidelite": 0,
   "paiement": 0,

@@ -256,6 +256,7 @@ def get_reapro(request):
 @require_POST
 def receive_order(request):
     print("Receiving order")
+    return HttpResponse('Thanks')
 
 # END VIEWS FUNCTIONS
 #############################

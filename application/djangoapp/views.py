@@ -7,7 +7,7 @@ from django.forms.models import model_to_dict
 from django.http import *
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.forms.models import model_to_dict
 from django.db.models import Q
 
@@ -46,8 +46,7 @@ def clear_data(request):
     return HttpResponseRedirect('/')
 
 
-# PRODUCTS
-
+# region Products related functions
 @require_GET
 def get_products(request):
     products = list(Produit.objects.all().values())
@@ -87,9 +86,9 @@ def show_products(request):
     return render(request, 'products.html', create_context(products))
 
 
-# END PRODUCTS
+# endregion
 
-# CUSTOMERS
+# region Customers related functions
 
 @require_GET
 def show_customers(request):
@@ -137,9 +136,17 @@ def update_customers(request):
     return HttpResponseRedirect('/customers')
 
 
-# END CUSTOMERS
+# endregion
 
-# SALES
+# region Sales related functions
+
+@csrf_exempt
+@require_http_methods(['GET', 'POST'])
+def api_sales(request):
+    if request.method == 'GET':
+        return get_sales(request)
+    return post_sales(request)
+
 
 @require_GET
 def show_sales(request):
@@ -165,6 +172,12 @@ def get_sales(request):
         ventes.append(vente)
 
     return JsonResponse(ventes, safe=False)
+
+
+@require_POST
+def post_sales(request):
+    print('Receiving sales')
+    return HttpResponse('Thanks')
 
 
 @csrf_exempt
@@ -198,7 +211,10 @@ def update_sales(request):
     return HttpResponseRedirect('/sales')
 
 
-# END SALES
+# endregion
+
+# region GesCo orders related functions
+
 # Todo : changer les noms de variables
 
 @require_GET
@@ -241,9 +257,8 @@ def request_restock(request):
 
     headers = {'Host': 'gestion-commerciale'}
 
+    # TODO: use api-manager function for post request instead
     r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
-
-    # TODO: check if we received all the products
 
     return HttpResponseRedirect('/orders')
 
@@ -253,14 +268,34 @@ def get_reapro(request):
     commande = list(ArticleCommande.objects.all().values())
     return JsonResponse(commande, safe=False)
 
+
 @require_POST
 def receive_order(request):
     print("Receiving order")
     return HttpResponse('Thanks')
 
-# END VIEWS FUNCTIONS
-#############################
-# UTILS FUNCTIONS
+
+# endregion
+
+# region Stock related functions
+
+@require_GET
+def get_stocks(request):
+    stocks = {
+        'X1-0': 0,
+        'X1-1': 0,
+        'X1-2': 0,
+        'X1-3': 0,
+        'X1-8': 0,
+        'X1-9': 0,
+        'X1-10': 0,
+    }
+    return JsonResponse(stocks, safe=False)
+
+
+# endregion
+
+# region UTILS FUNCTIONS
 
 # TODO: a tester
 def get_customer(carteFid, prenom, nom):
@@ -296,4 +331,4 @@ def schedule_task_simple(name, task, recurrence):
     time = time + timedelta(minutes=5)
     api.schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
 
-# END UTILS FUNCTIONS
+# endregion

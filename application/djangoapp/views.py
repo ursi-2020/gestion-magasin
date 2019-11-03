@@ -301,15 +301,10 @@ def receive_order(request):
 
 @require_GET
 def get_stocks(request):
-    stocks = {
-        'X1-0': 0,
-        'X1-1': 0,
-        'X1-2': 0,
-        'X1-3': 0,
-        'X1-8': 0,
-        'X1-9': 0,
-        'X1-10': 0,
-    }
+    stocks = dict()
+    articles = Produit.objects.all()
+    for article in articles:
+        stocks[article.codeProduit] = article.stock
     return JsonResponse(stocks, safe=False)
 
 

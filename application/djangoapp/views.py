@@ -176,7 +176,27 @@ def get_sales(request):
 
 @require_POST
 def post_sales(request):
-    print('Receiving sales')
+    print(request.body)
+    sale = json.loads(request.body)
+    print(sale)
+
+    # vente = Vente.objects.create(
+    #     date=sale['date'],
+    #     prix=sale['prix'],
+    #     client=sale['client'],
+    #     pointsFidelite=sale['pointsFidelite'],
+    #     modePaiement=sale['modePaiement']
+    # )
+    # for article_dict in sale['articles']:
+    #     tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
+    #     ArticleVendu.objects.create(
+    #         article=tmp,
+    #         vente=vente,
+    #         quantite=article_dict['quantity']
+    #     )
+    #
+    # GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+
     return HttpResponse('Thanks')
 
 

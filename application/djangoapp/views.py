@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.forms.models import model_to_dict
 from django.db.models import Q
+from django.utils.dateparse import parse_datetime
 
 from .models import *
 
@@ -176,28 +177,26 @@ def get_sales(request):
 
 @require_POST
 def post_sales(request):
-    print(request.body)
-    sale = json.loads(request.body)
-    print(sale)
+    sale = json.loads(request.POST.get("ticket"))
 
-    # vente = Vente.objects.create(
-    #     date=sale['date'],
-    #     prix=sale['prix'],
-    #     client=sale['client'],
-    #     pointsFidelite=sale['pointsFidelite'],
-    #     modePaiement=sale['modePaiement']
-    # )
-    # for article_dict in sale['articles']:
-    #     tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
-    #     ArticleVendu.objects.create(
-    #         article=tmp,
-    #         vente=vente,
-    #         quantite=article_dict['quantity']
-    #     )
-    #
-    # GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+    vente = Vente.objects.create(
+        date=datetime.strptime(sale['date'], '%d/%m/%Y-%H:%M:%S'),
+        prix=sale['prix'],
+        client=sale['client'],
+        pointsFidelite=sale['pointsFidelites'],
+        modePaiement=sale['modePaiement']
+    )
+    for article in json.loads(sale['articles']):
+        tmp = Produit.objects.get(codeProduit=article['codeProduit'])
+        ArticleVendu.objects.create(
+            article=tmp,
+            vente=vente,
+            quantite=article['quantity']
+        )
 
-    return HttpResponse('Thanks')
+    GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+
+    return HttpResponse('Sale received.')
 
 
 @csrf_exempt

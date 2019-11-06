@@ -23,9 +23,11 @@
             <thead class="thead-light">
                 <tr>
                     <th scope="col">ID Commande</th>
+                    <th scope="col">Statut de la commande</th>
                     <th scope="col">Date</th>
                     <th scope="col">Références produits</th>
                     <th scope="col">Quantité commandée</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +36,7 @@
                 <tr>
                     {% if forloop.first %}
                     <td rowspan="{{ commande.articles.count }}"> {{ commande.id }}</td>
+                    <td rowspan="{{ commande.articles.count }}"> {{ commande.statut }}</td>
                     <td rowspan="{{ commande.articles.count }}"> {{ commande.date }}</td>
                     {% endif %}
                     <td> {{ article.codeProduit }}</td>

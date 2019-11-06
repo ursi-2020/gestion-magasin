@@ -7,7 +7,7 @@ urlpatterns = [
     path('api/products/', views.get_products, name='Get Products'),
     path('api/customers/', views.get_customers, name='Get Customers'),
     path('api/sales/', views.api_sales, name='Get/Post Sales'),
-    path('api/order/', views.receive_order, name='Receive Order'),
+    path('api/order/', views.post_order, name='Receive Order'),
     path('api/stocks/', views.get_stocks, name='Get Stocks'),
 
     # HTML

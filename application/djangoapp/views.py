@@ -117,7 +117,7 @@ def update_customers(request):
     customers = api.send_request('crm', 'api/data')
     try:
         data = json.loads(customers)
-
+        print(data)
         for customer in data:
             Client.objects.update_or_create(
                 idClient=customer['IdClient'],
@@ -125,9 +125,8 @@ def update_customers(request):
                 nom=customer['Nom'],
                 defaults={
                     'ptsFidelite': customer['Credit'],
-                    'paiement': customer['Paiement'],
                     'compte': customer['Compte'],
-                    'carteFid': customer['carteFid']
+                    #'carteFid': customer['carteFid']
                 }
             )
         GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
@@ -289,9 +288,17 @@ def get_reapro(request):
 
 
 @require_POST
-def receive_order(request):
+#Recieve order from GesCo
+def post_order(request):
     print("Receiving order")
-    return HttpResponse('Thanks')
+    order = json.loads(request.body)
+    for produit in order['Produits']:
+        tmp = Produit.objects.filter(id)
+        tmp.stock += produit['quantite']
+
+    commande = Commande.objects.filter(id=order['idCommande'])
+    commande.statut = "Reçue"
+    return HttpResponse('Order received')
 
 
 # endregion

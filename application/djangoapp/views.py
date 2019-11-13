@@ -117,7 +117,6 @@ def update_customers(request):
     customers = api.send_request('crm', 'api/data')
     try:
         data = json.loads(customers)
-        print(data)
         for customer in data:
             Client.objects.update_or_create(
                 idClient=customer['IdClient'],
@@ -224,6 +223,7 @@ def update_sales(request):
                     quantite=article_dict['quantity']
                 )
         GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+        update_stock()
     except json.JSONDecodeError:
         GlobalInfo.objects.update(caisse_is_up=False)
     return HttpResponseRedirect('/sales')
@@ -232,8 +232,6 @@ def update_sales(request):
 # endregion
 
 # region GesCo orders related functions
-
-# Todo : changer les noms de variables
 
 @require_GET
 def show_orders(request):
@@ -293,11 +291,14 @@ def post_order(request):
     print("Receiving order")
     order = json.loads(request.body)
     for produit in order['Produits']:
-        tmp = Produit.objects.filter(id)
+        tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
         tmp.stock += produit['quantite']
+        tmp.save()
 
-    commande = Commande.objects.filter(id=order['idCommande'])
+    commande = Commande.objects.get(id=order['idCommande'])
     commande.statut = "Reçue"
+    commande.save()
+
     return HttpResponse('Order received')
 
 
@@ -313,17 +314,23 @@ def get_stocks(request):
         stocks[article.codeProduit] = article.stock
     return JsonResponse(stocks, safe=False)
 
+def update_stock():
+    articlesVendus = ArticleVendu.objects.all()
+    for a in articlesVendus:
+        produit = Produit.objects.get(codeProduit=a.article_id)
+        if produit.stock > 0:
+            produit.stock -= a.quantite
+        produit.save()
 
 # endregion
 
 # region UTILS FUNCTIONS
 
-# TODO: a tester
-def get_customer(carteFid, prenom, nom):
+def get_customer(IdClient, prenom, nom):
     try:
-        customer = Client.objects.filter(Q(carteFid=carteFid) | Q(prenom=prenom) | Q(nom=nom))
+        customer = Client.objects.filter(Q(idClient=IdClient) | Q(prenom=prenom) | Q(nom=nom))
     except Client.DoesNotExist:
-        return HttpResponseNotFound({"Customer '" + carteFid + "' does not exist."})
+        return HttpResponseNotFound({"Customer '" + IdClient + "' does not exist."})
     customer = list(customer.values())
     return JsonResponse(customer, safe=False)
 
@@ -351,5 +358,6 @@ def schedule_task_simple(name, task, recurrence):
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
     time = time + timedelta(minutes=5)
     api.schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
+
 
 # endregion

@@ -35,7 +35,7 @@ class Produit(models.Model):
 class Vente(models.Model):
     date = models.DateTimeField()
     prix = models.IntegerField()
-    client = models.CharField(max_length=20)
+    client = models.CharField(max_length=50)
     pointsFidelite = models.IntegerField()
     modePaiement = models.CharField(max_length=10)
     articles = models.ManyToManyField(Produit, through='ArticleVendu')

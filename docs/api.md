@@ -197,11 +197,11 @@ Code | Content Type | Value | Parameter
 ```
 ---
 
-### GET `/api/order`
+### POST `/api/sendOrder`
 
 
 #### *Description:*
-Route to post an order
+Route to deliver an order to Magasin app
 
 #### *Query Parameters:*
 
@@ -215,7 +215,7 @@ Code | Content Type | Value | Parameter
 
 #### *Usages:*
 
-`POST /api/order`
+`POST /api/sendOrder`
 
 body:
 ```json

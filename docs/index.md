@@ -12,21 +12,23 @@ et son réapprovisionnement, les promotions locales, la mise à disposition de r
 
 # Use Case
 
-<!-- *[Anciennes versions des Uses Cases](use-case.md)* -->
+ *[Anciennes versions des Uses Cases](use-case.md)*
 ![](images/usecase.png)
 
 
 # Utilisation de l'application
 
-La page d'accueil de l'application Magasin présente les référentiels PRODUIT et CLIENT actuellement présentes dans la base de donnée de l'application.
+La page d'accueil de l'application Magasin présente le référentiel PRODUIT. Depuis la barre de navigation nous avons accès au référetiel CLIENT, aux Ventes réalisé en magasin et les commandes passées.
 
 Au démarrage du serveur, 2 tâches sont lancées et ont pour but de mettre à jour automatiquement quotidiennement ces référentiels depuis les applications CATALOGUE et CRM.
 
 ![](images/dashboard.png)
 
-Depuis le tableau de bord, il est possible de:
+Dans l'application, il est possible de:
 - supprimer toutes les données de la base de donnée
 - synchroniser manuellement le référentiel PRODUIT depuis CATALOGUE
 - synchroniser manuellement le référentiel CLIENT depuis CRM
-- voir si les applications CATALOGUE et CRM sont hors ligne/en ligne
-- voir la dernière heure de synchronisation de chaque référentiel
+- synchroniser manuellement les ventes du jour depuis la CAISSE
+- synchroniser manuellement les commandes depuis la GESTION COMMERCIALE
+- voir si les applications CATALOGUE,CRM, CAISSE, GESTION COMMERCIALE sont hors ligne/en ligne
+- voir la dernière heure de synchronisation de chaque application

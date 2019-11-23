@@ -72,6 +72,9 @@ def update_products(request):
                     'prix': product['prix']
                 }
             )
+        globalInfo = GlobalInfo.objects.first()
+        if globalInfo.is_first_reapro:
+            get_reapro()
         GlobalInfo.objects.update(products_last_update=get_current_datetime(), catalogue_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(catalogue_is_up=False)
@@ -125,7 +128,7 @@ def update_customers(request):
                 defaults={
                     'ptsFidelite': customer['Credit'],
                     'compte': customer['Compte'],
-                    #'carteFid': customer['carteFid']
+                    # 'carteFid': customer['carteFid']
                 }
             )
         GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
@@ -146,7 +149,6 @@ def api_sales(request):
         return get_sales(request)
     return post_sales(request)
 
-
 @require_GET
 def show_sales(request):
     ventes = Vente.objects.all()
@@ -156,7 +158,6 @@ def show_sales(request):
         'ventes': ventes,
         'articles_vendus': ArticleVendu.objects.all()
     }))
-
 
 @require_GET
 def get_sales(request):
@@ -238,6 +239,25 @@ def show_orders(request):
     orders = Commande.objects.all()
     return render(request, 'orders.html', create_context(orders))
 
+@require_GET
+def get_reapro(request):
+    commande = list(ArticleCommande.objects.all().values())
+    return JsonResponse(commande, safe=False)
+
+@require_POST
+# Recieve order from GesCo
+def post_order(request):
+    order = json.loads(request.body)
+    for produit in order['Produits']:
+        tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
+        tmp.stock += produit['quantite']
+        tmp.save()
+
+    commande = Commande.objects.get(id=order['idCommande'])
+    commande.statut = "Reçue"
+    commande.save()
+
+    return HttpResponse('Order received')
 
 @csrf_exempt
 @require_POST
@@ -278,28 +298,48 @@ def request_restock(request):
 
     return HttpResponseRedirect('/orders')
 
-
-@require_GET
-def get_reapro(request):
-    commande = list(ArticleCommande.objects.all().values())
-    return JsonResponse(commande, safe=False)
-
-
+@csrf_exempt
 @require_POST
-#Recieve order from GesCo
-def post_order(request):
-    print("Receiving order")
-    order = json.loads(request.body)
-    for produit in order['Produits']:
-        tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
-        tmp.stock += produit['quantite']
-        tmp.save()
+def request_restock_init(request):
+    articles = Produit.objects.all()
+    article_commandes = {}
 
-    commande = Commande.objects.get(id=order['idCommande'])
-    commande.statut = "Reçue"
-    commande.save()
+    for a in articles:
+        article_commandes[str(a.codeProduit)] = a.stock
 
-    return HttpResponse('Order received')
+    commande = Commande.objects.create(date=get_current_datetime())
+
+    produits_body = []
+
+    for code_produit, quantite in article_commandes.items():
+        ArticleCommande.objects.create(
+            article=Produit.objects.get(codeProduit=code_produit),
+            commande=commande,
+            quantite=25
+        )
+        produits_body.append({
+            'codeProduit': code_produit,
+            'quantite': 25
+        })
+
+    request_body = {
+        'idCommande': commande.id,
+        'Produits': produits_body
+    }
+
+    headers = {'Host': 'gestion-commerciale'}
+    print(produits_body)
+    # TODO: use api-manager function for post request instead
+    r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
+
+    return HttpResponseRedirect('/orders')
+
+@csrf_exempt
+@require_POST
+def restock(request):
+    if ArticleCommande.objects.exists():
+        return request_restock(request)
+    return request_restock_init(request)
 
 
 # endregion
@@ -314,6 +354,7 @@ def get_stocks(request):
         stocks[article.codeProduit] = article.stock
     return JsonResponse(stocks, safe=False)
 
+
 def update_stock():
     articlesVendus = ArticleVendu.objects.all()
     for a in articlesVendus:
@@ -321,6 +362,7 @@ def update_stock():
         if produit.stock > 0:
             produit.stock -= a.quantite
         produit.save()
+
 
 # endregion
 
@@ -358,6 +400,5 @@ def schedule_task_simple(name, task, recurrence):
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
     time = time + timedelta(minutes=5)
     api.schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
-
 
 # endregion

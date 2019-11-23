@@ -7,8 +7,8 @@ urlpatterns = [
     path('api/products/', views.get_products, name='Get Products'),
     path('api/customers/', views.get_customers, name='Get Customers'),
     path('api/sales/', views.api_sales, name='Get/Post Sales'),
-    path('api/order/', views.post_order, name='Receive Order'),
     path('api/stocks/', views.get_stocks, name='Get Stocks'),
+    path('api/sendOrder/', views.post_order, name='Receive Order'),
 
     # HTML
     path('', views.index, name='index'),
@@ -23,7 +23,7 @@ urlpatterns = [
     path('sales/update/', views.update_sales, name='Update Sales'),
 
     path('orders/', views.show_orders, name='Show Orders'),
-    path('orders/command/', views.request_restock, name='Make Order'),
+    path('orders/command/', views.restock, name='Send Initial/Other Order'),
 
     path('clear_data/', views.clear_data, name='Clear Data'),
 ]

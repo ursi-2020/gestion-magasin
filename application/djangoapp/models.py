@@ -11,6 +11,8 @@ class GlobalInfo(models.Model):
     caisse_is_up = models.BooleanField(default=True)
     tickets_last_update = models.DateTimeField(null=True)
 
+    is_first_reapro = models.BooleanField(default=True)
+
 
 class Client(models.Model):
     idClient = models.TextField(blank=False, default="")

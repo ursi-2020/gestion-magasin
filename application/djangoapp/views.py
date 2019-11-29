@@ -297,6 +297,7 @@ def request_restock(request):
 @csrf_exempt
 @require_POST
 def request_restock_init(request):
+    GlobalInfo.objects.update(is_first_reapro=False)
     articles = Produit.objects.all()
     article_commandes = {}
 

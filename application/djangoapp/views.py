@@ -72,10 +72,6 @@ def update_products(request):
                     'prix': product['prix']
                 }
             )
-        globalInfo = GlobalInfo.objects.first()
-        if globalInfo.is_first_reapro:
-            get_reapro()
-        GlobalInfo.objects.update(products_last_update=get_current_datetime(), catalogue_is_up=True)
     except json.JSONDecodeError:
         GlobalInfo.objects.update(catalogue_is_up=False)
 

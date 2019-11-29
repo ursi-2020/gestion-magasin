@@ -30,6 +30,7 @@ class Produit(models.Model):
     packaging = models.PositiveIntegerField(default=0)
     prix = models.PositiveIntegerField(default=0)
     exclusivite = models.CharField(max_length=10, default=0)
+    promo = models.IntegerField(default=0)
 
     stock = models.PositiveIntegerField(default=0)
 

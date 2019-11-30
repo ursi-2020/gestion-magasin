@@ -13,8 +13,9 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from django.forms.models import model_to_dict
 from django.db.models import Q
 from django.utils.dateparse import parse_datetime
-
+from apipkg import queue_manager as queue
 from .models import *
+import os
 
 
 # TODO: very good documentation
@@ -154,6 +155,7 @@ def api_sales(request):
         return get_sales(request)
     return post_sales(request)
 
+
 @require_GET
 def show_sales(request):
     ventes = Vente.objects.all()
@@ -163,6 +165,7 @@ def show_sales(request):
         'ventes': ventes,
         'articles_vendus': ArticleVendu.objects.all()
     }))
+
 
 @require_GET
 def get_sales(request):
@@ -248,10 +251,12 @@ def show_orders(request):
     orders = Commande.objects.all()
     return render(request, 'orders.html', create_context(orders))
 
+
 @require_GET
 def get_reapro(request):
     commande = list(ArticleCommande.objects.all().values())
     return JsonResponse(commande, safe=False)
+
 
 @require_POST
 # Recieve order from GesCo
@@ -267,6 +272,7 @@ def post_order(request):
     commande.save()
 
     return HttpResponse('Order received')
+
 
 @csrf_exempt
 @require_POST
@@ -303,17 +309,11 @@ def request_restock(request):
     headers = {'Host': 'gestion-commerciale'}
 
     # TODO: use api-manager function for post request instead
-    sendAsyncMsg('gestion-commerciale', request_body, 'get_order_magasin')
-    #r = requests.post(api.api_services_url + 'sendAsyncMsg()', headers=headers, data=json.dumps(request_body))
+    # r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
+    send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
 
     return HttpResponseRedirect('/orders')
 
-def sendAsyncMsg(to, body, functionName):
-    time = api.send_request('scheduler', 'clock/time')
-    message = '{ "from":"' + os.environ[
-        'DJANGO_APP_NAME'] + '", "to": "' + to + '", "datetime": ' + time + ', "body": ' + json.dumps(
-       body) + ', "functionname":"' + functionName + '"}'
-    queue.send(to, message)
 
 @csrf_exempt
 @require_POST
@@ -342,15 +342,18 @@ def request_restock_init(request):
 
     request_body = {
         'idCommande': commande.id,
-        'Produits': produits_body
+        'produits': produits_body
     }
 
-    headers = {'Host': 'gestion-commerciale'}
-    print(produits_body)
-    # TODO: use api-manager function for post request instead
-    r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
+    # headers = {'Host': 'gestion-commerciale'}
+    # print(produits_body)
+    # # TODO: use api-manager function for post request instead
+    # r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
+
+    send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
 
     return HttpResponseRedirect('/orders')
+
 
 @csrf_exempt
 @require_POST
@@ -418,5 +421,13 @@ def schedule_task_simple(name, task, recurrence):
     time = datetime.strptime(clock_time, '"%d/%m/%Y-%H:%M:%S"')
     time = time + timedelta(minutes=5)
     api.schedule_task('gestion-magasin', task, time, recurrence, '{}', 'gestion-magasin', name)
+
+
+def send_async_msg(to, body, function_name):
+    time = api.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to": "' + to + '", "datetime": ' + time + ', "body": ' + json.dumps(
+        body) + ', "functionname":"' + function_name + '"}'
+    queue.send(to, message)
 
 # endregion

@@ -60,22 +60,26 @@ def get_products(request):
 @require_POST
 def update_products(request):
     products = api.send_request('catalogue-produit', 'api/get-magasin')
-    try:
-        data = json.loads(products)
-
-        for product in data['produits']:
-            Produit.objects.update_or_create(
-                codeProduit=product['codeProduit'],
-                defaults={
-                    'familleProduit': product['familleProduit'],
-                    'descriptionProduit': product['descriptionProduit'],
-                    'quantiteMin': product['quantiteMin'],
-                    'packaging': product['packaging'],
-                    'prix': product['prix']
-                }
-            )
-    except json.JSONDecodeError:
+    if products == '{"message":"no Route matched with those values"}':
         GlobalInfo.objects.update(catalogue_is_up=False)
+    else:
+        try:
+            data = json.loads(products)
+
+            for product in data['produits']:
+                Produit.objects.update_or_create(
+                    codeProduit=product['codeProduit'],
+                    defaults={
+                        'familleProduit': product['familleProduit'],
+                        'descriptionProduit': product['descriptionProduit'],
+                        'quantiteMin': product['quantiteMin'],
+                        'packaging': product['packaging'],
+                        'prix': product['prix']
+                    }
+                )
+            GlobalInfo.objects.update(products_last_update=get_current_datetime(), catalogue_is_up=True)
+        except json.JSONDecodeError:
+            GlobalInfo.objects.update(catalogue_is_up=False)
 
     return HttpResponseRedirect('/')
 
@@ -116,22 +120,25 @@ def get_customers(request):
 @require_POST
 def update_customers(request):
     customers = api.send_request('crm', 'api/data')
-    try:
-        data = json.loads(customers)
-        for customer in data:
-            Client.objects.update_or_create(
-                idClient=customer['IdClient'],
-                prenom=customer['Prenom'],
-                nom=customer['Nom'],
-                defaults={
-                    'ptsFidelite': customer['Credit'],
-                    'compte': customer['Compte'],
-                    # 'carteFid': customer['carteFid']
-                }
-            )
-        GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
-    except json.JSONDecodeError:
+    if customers == '{"message":"no Route matched with those values"}':
         GlobalInfo.objects.update(crm_is_up=False)
+    else:
+        try:
+            data = json.loads(customers)
+            for customer in data:
+                Client.objects.update_or_create(
+                    idClient=customer['IdClient'],
+                    prenom=customer['Prenom'],
+                    nom=customer['Nom'],
+                    defaults={
+                        'ptsFidelite': customer['Credit'],
+                        'compte': customer['Compte'],
+                        # 'carteFid': customer['carteFid']
+                    }
+                )
+            GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
+        except json.JSONDecodeError:
+            GlobalInfo.objects.update(crm_is_up=False)
 
     return HttpResponseRedirect('/customers')
 
@@ -200,31 +207,35 @@ def post_sales(request):
 @require_POST
 def update_sales(request):
     sales = api.send_request('caisse', 'api/tickets')
-    try:
-        data = json.loads(sales)
-
-        ArticleVendu.objects.all().delete()
-        Vente.objects.all().delete()
-
-        for sale in data:
-            vente = Vente.objects.create(
-                date=sale['date'],
-                prix=sale['prix'],
-                client=sale['client'],
-                pointsFidelite=sale['pointsFidelite'],
-                modePaiement=sale['modePaiement']
-            )
-            for article_dict in sale['articles']:
-                tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
-                ArticleVendu.objects.create(
-                    article=tmp,
-                    vente=vente,
-                    quantite=article_dict['quantity']
-                )
-        GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
-        update_stock()
-    except json.JSONDecodeError:
+    if sales == '{"message":"no Route matched with those values"}':
         GlobalInfo.objects.update(caisse_is_up=False)
+    else:
+        try:
+            data = json.loads(sales)
+
+            ArticleVendu.objects.all().delete()
+            Vente.objects.all().delete()
+
+            for sale in data:
+                vente = Vente.objects.create(
+                    date=sale['date'],
+                    prix=sale['prix'],
+                    client=sale['client'],
+                    pointsFidelite=sale['pointsFidelite'],
+                    modePaiement=sale['modePaiement']
+                )
+                for article_dict in sale['articles']:
+                    tmp = Produit.objects.get(codeProduit=article_dict['codeProduit'])
+                    ArticleVendu.objects.create(
+                        article=tmp,
+                        vente=vente,
+                        quantite=article_dict['quantity']
+                    )
+            GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
+            update_stock()
+        except json.JSONDecodeError:
+            GlobalInfo.objects.update(caisse_is_up=False)
+
     return HttpResponseRedirect('/sales')
 
 

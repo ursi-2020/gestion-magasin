@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 
 import json
+import os
 import requests
 from apipkg import api_manager as api
+from apipkg import queue_manager as queue
 from django.forms.models import model_to_dict
 from django.http import *
 from django.shortcuts import render
@@ -290,9 +292,17 @@ def request_restock(request):
     headers = {'Host': 'gestion-commerciale'}
 
     # TODO: use api-manager function for post request instead
-    r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
+    sendAsyncMsg('gestion-commerciale', request_body, 'get_order_magasin')
+    #r = requests.post(api.api_services_url + 'sendAsyncMsg()', headers=headers, data=json.dumps(request_body))
 
     return HttpResponseRedirect('/orders')
+
+def sendAsyncMsg(to, body, functionName):
+    time = api.send_request('scheduler', 'clock/time')
+    message = '{ "from":"' + os.environ[
+        'DJANGO_APP_NAME'] + '", "to": "' + to + '", "datetime": ' + time + ', "body": ' + json.dumps(
+       body) + ', "functionname":"' + functionName + '"}'
+    queue.send(to, message)
 
 @csrf_exempt
 @require_POST

@@ -262,7 +262,7 @@ def get_reapro(request):
 # Recieve order from GesCo
 def post_order(request):
     order = json.loads(request.body)
-    for produit in order['Produits']:
+    for produit in order['produits']:
         tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
         tmp.stock += produit['quantite']
         tmp.save()
@@ -303,7 +303,7 @@ def request_restock(request):
 
     request_body = {
         'idCommande': commande.id,
-        'Produits': produits_body
+        'produits': produits_body
     }
 
     headers = {'Host': 'gestion-commerciale'}

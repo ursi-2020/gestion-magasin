@@ -258,10 +258,11 @@ def get_reapro(request):
     return JsonResponse(commande, safe=False)
 
 
-@require_POST
+
 # Recieve order from GesCo
-def post_order(request):
-    order = json.loads(request.body)
+def post_order(cmd):
+    order = json.loads(cmd)
+    order = order['body']
     for produit in order['produits']:
         tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
         tmp.stock += produit['quantite']
@@ -308,8 +309,6 @@ def request_restock(request):
 
     headers = {'Host': 'gestion-commerciale'}
 
-    # TODO: use api-manager function for post request instead
-    # r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
     send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
 
     return HttpResponseRedirect('/orders')
@@ -344,11 +343,6 @@ def request_restock_init(request):
         'idCommande': commande.id,
         'produits': produits_body
     }
-
-    # headers = {'Host': 'gestion-commerciale'}
-    # print(produits_body)
-    # # TODO: use api-manager function for post request instead
-    # r = requests.post(api.api_services_url + 'place-order', headers=headers, data=json.dumps(request_body))
 
     send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
 

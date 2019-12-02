@@ -27,3 +27,4 @@ class ApplicationConfig(AppConfig):
             from .views import schedule_task_simple
             schedule_task_simple('Magasin: Update Products', '/products/update/', 'day')
             schedule_task_simple('Magasin: Update Customers', '/customers/update/', 'day')
+            schedule_task_simple('Magasin: Restock', '/orders/command/', 'day')

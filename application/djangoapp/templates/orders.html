@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-<!--{% load fontawesome_5 %}-->
-
 {% load custom_filters %}
 
 {% block content %}
@@ -9,12 +7,10 @@
     <div style="flex: 1">
         <div style="display: flex">
             <h4 style="flex: 1">
-                {% fa5_icon 'address-book' 'fas' %}
                 Commandes passées à Gestion Commerciale
             </h4>
             <form action="{% url 'Send Initial/Other Order' %}" method='POST'>
                 <button type="submit" class="btn btn-outline-dark btn-sm">
-                    {% fa5_icon 'shooping-cart' 'fas' %}
                     Commander
                 </button>
             </form>

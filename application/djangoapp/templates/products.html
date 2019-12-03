@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 
-<!--{% load fontawesome_5 %}-->
-
 {% block content %}
 <div style="display: flex">
     <div style="flex: 1">
         <div style="display: flex">
             <h4 style="flex: 1">
-                {% fa5_icon 'book-open' 'fas' %}
                 Catalogue Produit
             </h4>
             {% if global_info.catalogue_is_up %}
@@ -30,7 +27,6 @@
             </span>
             <form action="{% url 'Update Products' %}" method='POST'>
                 <button type="submit" class="btn btn-outline-dark btn-sm">
-                    {% fa5_icon 'sync-alt' 'fas' %}
                     Sync
                 </button>
             </form>

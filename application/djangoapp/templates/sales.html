@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-<!--{% load fontawesome_5 %}-->
-
 {% load custom_filters %}
 
 {% block content %}
@@ -9,7 +7,6 @@
     <div style="flex: 1">
         <div style="display: flex">
             <h4 style="flex: 1">
-                {% fa5_icon 'address-book' 'fas' %}
                 Ventes du jour
             </h4>
             {% if global_info.caisse_is_up %}
@@ -32,7 +29,6 @@
             </span>
             <form action="{% url 'Update Sales' %}" method='POST'>
                 <button type="submit" class="btn btn-outline-dark btn-sm">
-                    {% fa5_icon 'sync-alt' 'fas' %}
                     Sync
                 </button>
             </form>

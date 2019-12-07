@@ -234,6 +234,39 @@ body:
    }
 ```
 
+---
+### GET `/api/stocks`
+
+#### *Description:*
+Get the stocks of all the products in the shop
+
+#### *Query Parameters:*
+
+No parameters
+
+#### *Responses:*
+
+Code | Content Type | Value | Parameter
+---- | ------------ | ----- | ---------
+`200 OK` | `application/json` |  Array of [Products](#products) | *none*
+
+#### *Usages:*
+
+`GET /api/stocks`
+```json
+[
+  {
+    "codeProduit": "X1-1", 
+    "stock": 20
+  },
+  {
+    "codeProduit": "X2-1", 
+    "stock": 25
+  }
+]
+```
+---
+
 <br/>
 
 ## II - MODELS 

@@ -6,11 +6,17 @@ register = template.Library()
 
 @register.filter(name='quantity')
 def quantity(vente, article):
-    result = ArticleVendu.objects.get(article=article, vente=vente).quantite
+    result = 0
+    articlesVendus = ArticleVendu.objects.filter(article=article, vente=vente)
+    for articleVendu in articlesVendus:
+        result += articleVendu.quantite
     return result
 
 
 @register.filter(name='quantity_ordered')
 def quantity(commande, article):
-    result = ArticleCommande.objects.get(article=article, commande=commande).quantite
+    result = 0
+    articlesCommande = ArticleCommande.objects.filter(article=article, commande=commande)
+    for articleCommande in articlesCommande:
+        result += articleCommande.quantite
     return result

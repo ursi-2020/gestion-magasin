@@ -263,14 +263,19 @@ def get_reapro(request):
 def post_order(cmd):
     order = json.loads(cmd)
     order = order['body']
-    for produit in order['produits']:
-        tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
-        tmp.stock += produit['quantite']
-        tmp.save()
+    try:
 
-    commande = Commande.objects.get(id=order['idCommande'])
-    commande.statut = "Reçue"
-    commande.save()
+        for produit in order['produits']:
+            tmp = Produit.objects.get(codeProduit=produit['codeProduit'])
+            tmp.stock += produit['quantite']
+            tmp.save()
+
+        print('Commande livré: ', order['idCommande'])
+        commande = Commande.objects.get(id=order['idCommande'])
+        commande.statut = "Reçue"
+        commande.save()
+    except:
+        print('Tried to deliver: ', order['idCommande'], ' but didn\'t work, maybe it doesn\'t exist')
 
     return HttpResponse('Order received')
 
@@ -345,6 +350,7 @@ def request_restock_init(request):
     }
 
     send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
+    print(request_body)
 
     return HttpResponseRedirect('/orders')
 

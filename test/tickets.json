@@ -8,11 +8,11 @@
     "modePaiement": "CASH",
     "articles": [
       {
-        "codeProduit": "X1-0",
+        "codeProduit": "fo-X1-0",
         "quantity": 2
       },
       {
-        "codeProduit": "X1-9",
+        "codeProduit": "fo-X1-2",
         "quantity": 1
       }
     ]
@@ -26,7 +26,7 @@
     "modePaiement": "CARD",
     "articles": [
       {
-        "codeProduit": "X1-4",
+        "codeProduit": "fo-X1-4",
         "quantity": 2
       }
     ]

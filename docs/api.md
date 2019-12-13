@@ -254,15 +254,15 @@ Code | Content Type | Value | Parameter
 
 `GET /api/stocks`
 ```json
+
+stocks : 
 [
-  {
-    "codeProduit": "X1-1", 
-    "stock": 20
-  },
-  {
-    "codeProduit": "X2-1", 
-    "stock": 25
-  }
+     	{
+		"codeProduit" : "Y2-7",
+		"numeroFournisseur" : 1,
+		"codeFournisseur" : "Y2-7",
+		"stockDisponible" : 57,
+	}
 ]
 ```
 ---

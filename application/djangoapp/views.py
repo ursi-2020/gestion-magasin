@@ -408,6 +408,19 @@ def get_promo_magasin(request):
 
     return JsonResponse(promos, safe=False)
 
+def get_promo_client(request):
+    data = api.send_request('gestion-promotion', 'promo/customers')
+    try:
+        promos = json.loads(data)
+        for promo in promos['promo']:
+            p = Client.objects.get(codeProduit=promo['idClient'])
+            p.promo = promo['reduction']
+            p.save()
+    except:
+        print("Couldn't load json")
+
+# def get_promo_clientCart(request):
+
 # def show_promo(request):
 #     promos = Produit.objects.all()
 #     for promo in promos:

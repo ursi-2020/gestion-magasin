@@ -20,6 +20,7 @@ class Client(models.Model):
     nom = models.CharField(max_length=200)
     ptsFidelite = models.DecimalField(default=0, max_digits=6, decimal_places=2)
     compte = models.CharField(max_length=10, default="")
+    promo = models.IntegerField(default=0)
 
 
 class Produit(models.Model):

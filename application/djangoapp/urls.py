@@ -27,5 +27,7 @@ urlpatterns = [
 
     path('clear_data/', views.clear_data, name='Clear Data'),
 
-    path('promo/', views.show_promo, name='Get Promo'),
+    path('promo/magasin', views.get_promo_magasin, name='Get Promo'),
+    path('promo/client', views.get_promo_client, name='Get Promo Client')
+
 ]

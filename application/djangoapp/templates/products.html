@@ -37,9 +37,9 @@
                     <th scope="col">Code produit</th>
                     <th scope="col">Famille produit</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Quantité Min.</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Prix (en €)</th>
+                    <th scope="col">Prix après réduction</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,9 +48,9 @@
                     <td> {{ product.codeProduit }}</td>
                     <td> {{ product.familleProduit }}</td>
                     <td> {{ product.descriptionProduit }}</td>
-                    <td> {{ product.quantiteMin }}</td>
                     <td> {{ product.stock }}</td>
                     <td> {{ product.prix }}</td>
+                    <td> {{ product.prixApres }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

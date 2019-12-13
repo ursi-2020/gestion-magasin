@@ -26,4 +26,6 @@ urlpatterns = [
     path('orders/command/', views.restock, name='Send Initial/Other Order'),
 
     path('clear_data/', views.clear_data, name='Clear Data'),
+
+    path('promo/', views.show_promo, name='Get Promo'),
 ]

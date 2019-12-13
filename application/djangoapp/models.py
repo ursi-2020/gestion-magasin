@@ -24,6 +24,8 @@ class Client(models.Model):
 
 class Produit(models.Model):
     codeProduit = models.CharField(max_length=200, primary_key=True)
+    # codeProduitFournisseur = models.CharField(max_length=200)
+    # nomFournisseur = models.CharField(max_length=200)
     familleProduit = models.CharField(max_length=200)
     descriptionProduit = models.CharField(max_length=200)
     quantiteMin = models.PositiveIntegerField(default=0)
@@ -31,7 +33,7 @@ class Produit(models.Model):
     prix = models.PositiveIntegerField(default=0)
     exclusivite = models.CharField(max_length=10, default=0)
     promo = models.IntegerField(default=0)
-    prixApres = models.IntegerField(default=0)
+    prixApres = models.FloatField(default=0)
     stock = models.PositiveIntegerField(default=0)
 
 
@@ -42,7 +44,6 @@ class Vente(models.Model):
     pointsFidelite = models.IntegerField()
     modePaiement = models.CharField(max_length=10)
     articles = models.ManyToManyField(Produit, through='ArticleVendu')
-    #ajouter prix et promo
 
 
 class ArticleVendu(models.Model):

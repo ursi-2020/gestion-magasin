@@ -134,7 +134,6 @@ def update_customers(request):
                     defaults={
                         'ptsFidelite': customer['Credit'],
                         'compte': customer['Compte'],
-                        # 'carteFid': customer['carteFid']
                     }
                 )
             GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
@@ -373,6 +372,10 @@ def get_stocks(request):
     articles = Produit.objects.all()
     for article in articles:
         stocks[article.codeProduit] = article.stock
+        # stocks.append({
+        #     'codeProduit' = article.codeProduit,
+        #
+        # })
     return JsonResponse(stocks, safe=False)
 
 
@@ -385,9 +388,37 @@ def update_stock():
         produit.save()
 
 
-# endregion
+# end region
+
+# region Promo related functions
+
+@require_GET
+def get_promo_magasin(request):
+    data = api.send_request('gestion-promotion', 'promo/magasin')
+    try:
+        promos = json.loads(data)
+        for promo in promos['promo']:
+            p = Produit.objects.get(codeProduit=promo['codeProduit'])
+            p.promo = promo['reduction']
+            p.prixApres = promo['prix']
+            # print(p.prixApres)
+            p.save()
+    except:
+        print("Couldn't load json")
+
+    return JsonResponse(promos, safe=False)
+
+# def show_promo(request):
+#     promos = Produit.objects.all()
+#     for promo in promos:
+#         promo.prixApres = promo.prixApres / 100
+#     return render(request, '')
+
+
+# end region
 
 # region UTILS FUNCTIONS
+
 
 def get_customer(IdClient, prenom, nom):
     try:

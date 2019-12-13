@@ -258,11 +258,11 @@ Code | Content Type | Value | Parameter
 stocks : 
 [
      	{
-        codeProduit : ‘Y2-7’,
-        numeroFournisseur : 1,
-        codeFournisseur : ‘Y2-7’,
-        stockDisponible : 57
-		  }
+		"codeProduit" : "Y2-7",
+		"numeroFournisseur" : 1,
+		"codeFournisseur" : "Y2-7",
+		"stockDisponible" : 57,
+	}
 ]
 ```
 ---

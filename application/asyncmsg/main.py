@@ -24,7 +24,11 @@ def callback(ch, method, properties, body):
     if fromApp == 'gestion-commerciale':
         if functionName == "get_order_response":
             views.post_order(body)
-
+        else:
+            print("Le nom de la func existe pas", functionName)
+    elif fromApp == 'business-intelligence':
+        if functionName == 'ask_for_stock':
+            views.send_stock()
         else:
             print("Le nom de la func existe pas", functionName)
     else:

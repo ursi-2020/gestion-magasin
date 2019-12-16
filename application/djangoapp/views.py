@@ -368,16 +368,16 @@ def restock(request):
 
 @require_GET
 def get_stocks(request):
-    stocks = dict()
+    return JsonResponse(send_stock(), safe=False)
+
+def send_stock():
     articles = Produit.objects.all()
     for article in articles:
-        stocks[article.codeProduit] = article.stock
-        # stocks.append({
-        #     'codeProduit' = article.codeProduit,
-        #
-        # })
-    return JsonResponse(stocks, safe=False)
-
+        article['codeFournisseur'] = article['codeProduit']
+        article['numeroFournisseur'] = 1
+        article['stockDisponible'] = article['stock']
+    send_async_msg('business-intelligence', str({"stock":articles}), "get_stock_magasin")
+    return articles
 
 def update_stock():
     articlesVendus = ArticleVendu.objects.all()

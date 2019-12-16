@@ -372,12 +372,15 @@ def get_stocks(request):
 
 def send_stock():
     articles = Produit.objects.all()
+    result = []
     for article in articles:
-        article['codeFournisseur'] = article['codeProduit']
-        article['numeroFournisseur'] = 1
-        article['stockDisponible'] = article['stock']
-    send_async_msg('business-intelligence', str({"stock":articles}), "get_stock_magasin")
-    return articles
+        a = dict()
+        a['numeroFournisseur'] = 1
+        a['stockDisponible'] = article.stock
+        a['codeProduit'] = a['codeFournisseur'] = article.codeProduit
+        result.append(a)
+    send_async_msg('business-intelligence', str({"stock": result}), "get_stock_magasin")
+    return result
 
 def update_stock():
     articlesVendus = ArticleVendu.objects.all()

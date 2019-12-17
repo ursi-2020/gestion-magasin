@@ -64,3 +64,12 @@ class ArticleCommande(models.Model):
     article = models.ForeignKey(Produit, on_delete=models.PROTECT)
     commande = models.ForeignKey(Commande, on_delete=models.PROTECT)
     quantite = models.IntegerField()
+
+class CustomersProducts(models.Model):
+    date = models.DateTimeField()
+    idClient = models.TextField(blank=False, default="")
+    codeProduit = models.CharField(max_length=200)
+    quantite = models.IntegerField()
+    promo = models.IntegerField(default=0)
+
+

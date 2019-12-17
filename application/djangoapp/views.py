@@ -106,7 +106,6 @@ def show_customers(request):
 
 @require_GET
 def get_customers(request):
-    # Changer nom en français
     carteFid = request.GET.get('carteFid')
     prenom = request.GET.get('prenom')
     nom = request.GET.get('nom')
@@ -139,7 +138,7 @@ def update_customers(request):
                 )
             GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
             get_promo_client(request)
-            get_promo_customers_products(request)
+            # get_promo_customers_products(request)
         except json.JSONDecodeError:
             GlobalInfo.objects.update(crm_is_up=False)
 
@@ -352,7 +351,6 @@ def request_restock_init(request):
     }
 
     send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
-    print(request_body)
 
     return HttpResponseRedirect('/orders')
 
@@ -427,13 +425,21 @@ def get_promo_customers_products(request):
     data = api.send_request('gestion-promotion', 'promo/customersproducts')
     try:
         promos = json.loads(data)
-        context = {
-            'context': promos['promo']
-        }
-        print(context)
+        print(promos)
+        for p in promos['promo']:
+            CustomersProducts.objects.update_or_create(
+                date=p['date'],
+                idClient=p['IdClient'],
+                codeProduit=p['codeProduit'],
+                quantite=p['quantity'],
+                promo=p['reduction']
+            )
+        promos = CustomersProducts.objects.all().values()
+        print(promos)
     except:
+        # context = "null"
         print("Couldn't load json")
-    return render(request, 'customers.html', context)
+    return render(request, 'customers.html', context = promos)
 
 # end region
 

@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/stocks/', views.get_stocks, name='Get Stocks'),
     path('get_stocks/', views.get_stocks, name='Get Stocks'),
     path('api/sendOrder/', views.post_order, name='Receive Order'),
-    path('/api/promo/customersProducts', views.get_promo_customers_products, name='Get Promo Client Products'),
+    path('api/promo/customersProducts/', views.get_promo_customers_products, name='Get Promo Client Products'),
 
     # HTML
     path('', views.index, name='index'),

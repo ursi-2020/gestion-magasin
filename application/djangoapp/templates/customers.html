@@ -42,6 +42,7 @@
                     <th scope="col">Réduction accumulé</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for customer in context %}
                 <tr>
@@ -67,13 +68,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for customer in context %}
+                {% for promos in context %}
                 <tr>
-                    <td> customer['date'] </td>
-                    <td> {{ customer.IdClient }}</td>
-                    <td> {{ customer.codeProduit }}</td>
-                    <td> {{ customer.quantity }}</td>
-                    <td> {{ customer.reduction }}</td>
+                    <td> {{ promos.date }}</td>
+                    <td> {{ promos.IdClient }}</td>
+                    <td> {{ promos.codeProduit }}</td>
+                    <td> {{ promos.quantity }}</td>
+                    <td> {{ promos.reduction }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

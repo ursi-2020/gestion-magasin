@@ -55,6 +55,30 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <table class="table table-hover table-sm table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Id Client</th>
+                    <th scope="col">Code Produit</th>
+                    <th scope="col">Quantité</th>
+                    <th scope="col">Reduction</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in context %}
+                <tr>
+                    <td> customer['date'] </td>
+                    <td> {{ customer.IdClient }}</td>
+                    <td> {{ customer.codeProduit }}</td>
+                    <td> {{ customer.quantity }}</td>
+                    <td> {{ customer.reduction }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     </div>
 </div>
 {% endblock %}

@@ -139,6 +139,7 @@ def update_customers(request):
                 )
             GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
             get_promo_client(request)
+            get_promo_customers_products(request)
         except json.JSONDecodeError:
             GlobalInfo.objects.update(crm_is_up=False)
 
@@ -414,7 +415,6 @@ def get_promo_client(request):
     data = api.send_request('gestion-promotion', 'promo/customers')
     try:
         promos = json.loads(data)
-        print(promos)
         for promo in promos['promo']:
             p = Client.objects.get(idClient=promo['IdClient'])
             p.promo = promo['reduction']
@@ -422,14 +422,18 @@ def get_promo_client(request):
     except:
         print("Couldn't load json")
 
-# def get_promo_clientCart(request):
-
-# def show_promo(request):
-#     promos = Produit.objects.all()
-#     for promo in promos:
-#         promo.prixApres = promo.prixApres / 100
-#     return render(request, '')
-
+# @require_GET
+def get_promo_customers_products(request):
+    data = api.send_request('gestion-promotion', 'promo/customersproducts')
+    try:
+        promos = json.loads(data)
+        context = {
+            'context': promos['promo']
+        }
+        print(context)
+    except:
+        print("Couldn't load json")
+    return render(request, 'customers.html', context)
 
 # end region
 

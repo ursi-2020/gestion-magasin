@@ -138,6 +138,7 @@ def update_customers(request):
                     }
                 )
             GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
+            get_promo_client(request)
         except json.JSONDecodeError:
             GlobalInfo.objects.update(crm_is_up=False)
 
@@ -413,8 +414,9 @@ def get_promo_client(request):
     data = api.send_request('gestion-promotion', 'promo/customers')
     try:
         promos = json.loads(data)
+        print(promos)
         for promo in promos['promo']:
-            p = Client.objects.get(codeProduit=promo['idClient'])
+            p = Client.objects.get(idClient=promo['IdClient'])
             p.promo = promo['reduction']
             p.save()
     except:

@@ -39,6 +39,7 @@
                     <th scope="col">Prénom</th>
                     <th scope="col">Nº Compte</th>
                     <th scope="col">Pts fidélité</th>
+                    <th scope="col">Réduction accumulé</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,6 +50,7 @@
                     <td> {{ customer.prenom }}</td>
                     <td> {{ customer.compte }}</td>
                     <td> {{ customer.ptsFidelite }}</td>
+                    <td> {{ customer.promo }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

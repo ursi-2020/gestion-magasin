@@ -75,10 +75,11 @@ def update_products(request):
                         'descriptionProduit': product['descriptionProduit'],
                         'quantiteMin': product['quantiteMin'],
                         'packaging': product['packaging'],
-                        'prix': product['prix']
+                        'prix': product['prix'],
                     }
                 )
             GlobalInfo.objects.update(products_last_update=get_current_datetime(), catalogue_is_up=True)
+            get_promo_magasin(request)
         except json.JSONDecodeError:
             GlobalInfo.objects.update(catalogue_is_up=False)
 
@@ -395,7 +396,6 @@ def update_stock():
 
 # region Promo related functions
 
-@require_GET
 def get_promo_magasin(request):
     data = api.send_request('gestion-promotion', 'promo/magasin')
     try:
@@ -403,13 +403,11 @@ def get_promo_magasin(request):
         for promo in promos['promo']:
             p = Produit.objects.get(codeProduit=promo['codeProduit'])
             p.promo = promo['reduction']
-            p.prixApres = promo['prix']
-            # print(p.prixApres)
+            p.prixApres = promo['prix'] / 100
             p.save()
     except:
         print("Couldn't load json")
 
-    return JsonResponse(promos, safe=False)
 
 def get_promo_client(request):
     data = api.send_request('gestion-promotion', 'promo/customers')

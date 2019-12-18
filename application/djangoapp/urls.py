@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/stocks/', views.get_stocks, name='Get Stocks'),
     path('get_stocks/', views.get_stocks, name='Get Stocks'),
     path('api/sendOrder/', views.post_order, name='Receive Order'),
-    path('api/promo/customersProducts/', views.show_promo_customers_products, name='Get Promo Client Products'),
+    path('api/promo/customersProducts/', views.get_promo_customers_products, name='Show Promo Client Products'),
 
     # HTML
     path('', views.index, name='index'),
@@ -31,6 +31,7 @@ urlpatterns = [
 
     path('promo/magasin', views.get_promo_magasin, name='Get Promo'),
     path('promo/client', views.get_promo_client, name='Get Promo Client'),
+    path('promo/customersProducts', views.update_promo_customers_products, name='Get Promo Client Products')
 
 
 ]

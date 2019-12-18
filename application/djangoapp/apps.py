@@ -28,3 +28,4 @@ class ApplicationConfig(AppConfig):
             schedule_task_simple('Magasin: Update Products', '/products/update/', 'day')
             schedule_task_simple('Magasin: Update Customers', '/customers/update/', 'day')
             schedule_task_simple('Magasin: Restock', '/orders/command/', 'day')
+            schedule_task_simple('Magasin: Update promos Client Products', 'promo/customersProducts', 'day')

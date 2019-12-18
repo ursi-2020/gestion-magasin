@@ -101,7 +101,11 @@ def show_products(request):
 @require_GET
 def show_customers(request):
     customers = list(Client.objects.all().values())
-    return render(request, 'customers.html', create_context(customers))
+    promos = list(CustomersProducts.objects.all().values())
+    return render(request, 'customers.html', create_context({
+        'customers': customers,
+        'promos': promos
+    }))
 
 
 @require_GET
@@ -420,12 +424,13 @@ def get_promo_client(request):
     except:
         print("Couldn't load json")
 
-# @require_GET
-def get_promo_customers_products(request):
+@csrf_exempt
+@require_POST
+def update_promo_customers_products(request):
     data = api.send_request('gestion-promotion', 'promo/customersproducts')
     try:
         promos = json.loads(data)
-        print(promos)
+        CustomersProducts.objects.all().delete()
         for p in promos['promo']:
             CustomersProducts.objects.update_or_create(
                 date=p['date'],
@@ -434,16 +439,13 @@ def get_promo_customers_products(request):
                 quantite=p['quantity'],
                 promo=p['reduction']
             )
-        p.save()
-        promos = CustomersProducts.objects.all().values()
-        print(promos)
     except:
-        # context = "null"
         print("Couldn't load json")
-    return render(request, 'customers.html', context = promos)
 
-# @require_GET
-def show_promo_customers_products(request):
+    return HttpResponseRedirect('/customers')
+
+@require_GET
+def get_promo_customers_products(request):
     promos = list(CustomersProducts.objects.all().values())
     return JsonResponse(promos, safe=False)
 # end region

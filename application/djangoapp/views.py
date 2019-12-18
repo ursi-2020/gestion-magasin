@@ -446,8 +446,15 @@ def update_promo_customers_products(request):
 
 @require_GET
 def get_promo_customers_products(request):
-    promos = list(CustomersProducts.objects.all().values())
-    return JsonResponse(promos, safe=False)
+    idClient = request.GET.get('idClient')
+    codeProduit = request.GET.get('codeProduit')
+    try:
+        data = CustomersProducts.objects.filter(idClient=idClient, codeProduit=codeProduit)[0]
+        promo = data.promo
+    except Exception as e:
+        promo = 0
+    return JsonResponse({'promo': promo})
+
 # end region
 
 # region UTILS FUNCTIONS

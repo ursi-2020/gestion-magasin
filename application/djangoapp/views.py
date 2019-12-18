@@ -434,6 +434,7 @@ def get_promo_customers_products(request):
                 quantite=p['quantity'],
                 promo=p['reduction']
             )
+        p.save()
         promos = CustomersProducts.objects.all().values()
         print(promos)
     except:
@@ -441,6 +442,10 @@ def get_promo_customers_products(request):
         print("Couldn't load json")
     return render(request, 'customers.html', context = promos)
 
+# @require_GET
+def show_promo_customers_products(request):
+    promos = list(CustomersProducts.objects.all().values())
+    return JsonResponse(promos, safe=False)
 # end region
 
 # region UTILS FUNCTIONS

@@ -39,7 +39,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Prix (en €)</th>
-                    <th scope="col">Prix après réduction</th>
+<!--                    <th scope="col">Prix après réduction</th>-->
                 </tr>
             </thead>
             <tbody>
@@ -50,11 +50,14 @@
                     <td> {{ product.descriptionProduit }}</td>
                     <td> {{ product.stock }}</td>
                     {% if product.prixApres != 0.0 %}
-                        <td style="text-decoration: line-through; ">  {{ product.prix }}</td>
+                    <td>
+                        Avant réduction:
+                        <p style="text-decoration: line-through; ">  {{ product.prix }} </p>
+                        <p> Après réduction: {{ product.prixApres }}</p>
+                    </td>
                     {% else %}
                     <td>{{ product.prix }}</td>
                     {% endif %}
-                    <td> {{ product.prixApres }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

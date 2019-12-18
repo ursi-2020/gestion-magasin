@@ -385,6 +385,7 @@ def send_stock():
         a['codeProduit'] = a['codeFournisseur'] = article.codeProduit
         result.append(a)
     send_async_msg('business-intelligence', str({"stock": result}), "get_stock_magasin")
+    result = {'stocks': result}
     return result
 
 def update_stock():
@@ -404,6 +405,7 @@ def get_promo_magasin(request):
     data = api.send_request('gestion-promotion', 'promo/magasin')
     try:
         promos = json.loads(data)
+        clear_promos_produits()
         for promo in promos['promo']:
             p = Produit.objects.get(codeProduit=promo['codeProduit'])
             p.promo = promo['reduction']
@@ -417,6 +419,7 @@ def get_promo_client(request):
     data = api.send_request('gestion-promotion', 'promo/customers')
     try:
         promos = json.loads(data)
+        clear_promos_customers()
         for promo in promos['promo']:
             p = Client.objects.get(idClient=promo['IdClient'])
             p.promo = promo['reduction']
@@ -454,6 +457,19 @@ def get_promo_customers_products(request):
     except Exception as e:
         promo = 0
     return JsonResponse({'promo': promo})
+
+def clear_promos_produits(request):
+    produits = Produit.objects.all()
+    for p in produits:
+        p.promo = 0
+        p.prixApres = p.prix
+        p.save()
+
+def clear_promos_customers(request):
+    customers = Client.objects.all()
+    for c in customers:
+        c.promo = 0
+        c.save()
 
 # end region
 

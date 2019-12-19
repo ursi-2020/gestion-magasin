@@ -40,6 +40,7 @@ def clear_data(request):
     Commande.objects.all().delete()
     Produit.objects.all().delete()
     Vente.objects.all().delete()
+    CustomersProducts.objects.all().delete()
 
     GlobalInfo.objects.filter().update(
         products_last_update=None,
@@ -403,9 +404,10 @@ def update_stock():
 
 def get_promo_magasin(request):
     data = api.send_request('gestion-promotion', 'promo/magasin')
+    print(data)
     try:
         promos = json.loads(data)
-        clear_promos_produits()
+        # clear_promos_produits()
         for promo in promos['promo']:
             p = Produit.objects.get(codeProduit=promo['codeProduit'])
             p.promo = promo['reduction']
@@ -419,7 +421,7 @@ def get_promo_client(request):
     data = api.send_request('gestion-promotion', 'promo/customers')
     try:
         promos = json.loads(data)
-        clear_promos_customers()
+        # clear_promos_customers()
         for promo in promos['promo']:
             p = Client.objects.get(idClient=promo['IdClient'])
             p.promo = promo['reduction']

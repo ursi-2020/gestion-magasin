@@ -185,7 +185,7 @@ def get_sales(request):
             vente['articles'].append(model_to_dict(article_obj))
         ventes.append(vente)
 
-    return JsonResponse(ventes, safe=False)
+    return JsonResponse({'tickets': ventes}, safe=False)
 
 
 @require_POST
@@ -354,7 +354,7 @@ def request_restock_init(request):
         'idCommande': commande.id,
         'produits': produits_body
     }
-
+    # if produits_body != []:
     send_async_msg('gestion-commerciale', request_body, 'get_order_magasin')
 
     return HttpResponseRedirect('/orders')

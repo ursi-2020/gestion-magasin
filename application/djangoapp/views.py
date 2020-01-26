@@ -264,6 +264,7 @@ def get_reapro(request):
     return JsonResponse(commande, safe=False)
 
 
+
 # Recieve order from GesCo
 def post_order(cmd):
     order = json.loads(cmd)
@@ -275,7 +276,7 @@ def post_order(cmd):
             tmp.stock += produit['quantite']
             tmp.save()
 
-        # print('Commande livré: ', order['idCommande'])
+        print('Commande livré: ', order['idCommande'])
         commande = Commande.objects.get(id=order['idCommande'])
         commande.statut = "Reçue"
         commande.save()
@@ -375,7 +376,6 @@ def restock(request):
 def get_stocks(request):
     return JsonResponse(send_stock(), safe=False)
 
-
 def send_stock():
     articles = Produit.objects.all()
     result = []
@@ -388,7 +388,6 @@ def send_stock():
     send_async_msg('business-intelligence', str({"stock": result}), "get_stock_magasin")
     result = {'stocks': result}
     return result
-
 
 def update_stock():
     articlesVendus = ArticleVendu.objects.all()
@@ -405,7 +404,7 @@ def update_stock():
 
 def get_promo_magasin(request):
     data = api.send_request('gestion-promotion', 'promo/magasin')
-    # print(data)
+    print(data)
     try:
         promos = json.loads(data)
         # clear_promos_produits()
@@ -430,7 +429,6 @@ def get_promo_client(request):
     except:
         print("Couldn't load json")
 
-
 @csrf_exempt
 @require_POST
 def update_promo_customers_products(request):
@@ -451,7 +449,6 @@ def update_promo_customers_products(request):
 
     return HttpResponseRedirect('/customers')
 
-
 @require_GET
 def get_promo_customers_products(request):
     idClient = request.GET.get('idClient')
@@ -463,14 +460,12 @@ def get_promo_customers_products(request):
         promo = 0
     return JsonResponse({'promo': promo})
 
-
 def clear_promos_produits(request):
     produits = Produit.objects.all()
     for p in produits:
         p.promo = 0
         p.prixApres = p.prix
         p.save()
-
 
 def clear_promos_customers(request):
     customers = Client.objects.all()

@@ -276,7 +276,6 @@ def post_order(cmd):
             tmp.stock += produit['quantite']
             tmp.save()
 
-        print('Commande livré: ', order['idCommande'])
         commande = Commande.objects.get(id=order['idCommande'])
         commande.statut = "Reçue"
         commande.save()

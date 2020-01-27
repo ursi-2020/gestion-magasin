@@ -14,7 +14,6 @@ from application.djangoapp import views
 
 
 def callback(ch, method, properties, body):
-    print(" [x] Received from queue %r" % body)
     jsonLoad = json.loads(body)
     fromApp = jsonLoad["from"]
     functionName = ""

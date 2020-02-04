@@ -45,7 +45,11 @@ def clear_data(request):
     GlobalInfo.objects.filter().update(
         products_last_update=None,
         customers_last_update=None,
-        tickets_last_update=None
+        tickets_last_update=None,
+        catalogue_is_up=True,
+        crm_is_up=True,
+        caisse_is_up=True,
+        is_first_reapro=True,
     )
 
     return HttpResponseRedirect('/')
@@ -285,6 +289,7 @@ def get_reapro(request):
 
 # Recieve order from GesCo
 def post_order(cmd):
+    print(cmd)
     order = json.loads(cmd)
     order = order['body']
     try:
@@ -348,6 +353,8 @@ def request_restock(request):
 @require_POST
 def request_restock_init(request):
     GlobalInfo.objects.update(is_first_reapro=False)
+
+
     articles = Produit.objects.all()
 
     commande = Commande.objects.create(date=get_current_datetime())
@@ -358,11 +365,11 @@ def request_restock_init(request):
         ArticleCommande.objects.create(
             article=Produit.objects.get(codeProduit=article.codeProduit),
             commande=commande,
-            quantite=25
+            quantite=article.quantiteMin * 2
         )
         produits_body.append({
             'codeProduit': article.codeProduit,
-            'quantite': 25
+            'quantite': article.quantiteMin * 2
         })
 
     request_body = {
@@ -378,8 +385,10 @@ def request_restock_init(request):
 @csrf_exempt
 @require_POST
 def restock(request):
-    request_restock(request)
-    return request_restock_init(request)
+    print(GlobalInfo.objects.first().is_first_reapro)
+    if GlobalInfo.objects.first().is_first_reapro:
+        return request_restock_init(request)
+    return request_restock(request)
 
 
 # endregion

@@ -141,6 +141,9 @@ def update_customers(request):
                         'compte': customer['Compte'],
                     }
                 )
+                CustomersProducts.objects.update_or_create(
+                    idClient=customer['IdClient']
+                )
             GlobalInfo.objects.update(customers_last_update=get_current_datetime(), crm_is_up=True)
             get_promo_client(request)
             # get_promo_customers_products(request)
@@ -186,8 +189,20 @@ def get_sales(request):
             vente_dict = model_to_dict(article_obj)
             vente_dict['quantity'] = article_vendu_obj.quantity
             vente['articles'].append(vente_dict)
+            if vente['client']:
+                try:
+                    vente['CustomerPromo'] = CustomersProducts.objects.filter(idClient=vente['client'],
+                                                                      codeProduit=article_obj.codeProduit)[0].promo
+                except Exception as e :
+                    print(e)
+                    vente['CustomerPromo'] = 0
+        if vente['client']:
+            try:
+                vente['GlobalPromo'] = Client.objects.filter(idClient=vente['client'])[0].promo
+            except Exception as e:
+                print(e)
+                vente['GlobalPromo'] = 0
         ventes.append(vente)
-
 
     return JsonResponse({'tickets': ventes}, safe=False)
 
@@ -441,10 +456,8 @@ def update_promo_customers_products(request):
         CustomersProducts.objects.all().delete()
         for p in promos['promo']:
             CustomersProducts.objects.update_or_create(
-                date=p['date'],
                 idClient=p['IdClient'],
                 codeProduit=p['codeProduit'],
-                quantite=p['quantity'],
                 promo=p['reduction']
             )
     except:

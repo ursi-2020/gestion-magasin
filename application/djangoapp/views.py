@@ -192,7 +192,7 @@ def get_sales(request):
                 try:
                     vente_dict['promo_client_produit'] = CustomersProducts.objects.filter(idClient=vente['client'], codeProduit=article_obj.codeProduit)[0].promo
                 except Exception as e:
-                    print(e)
+                    # print(e)
                     vente_dict['promo_client_produit'] = 0
             vente['articles'].append(vente_dict)
 
@@ -200,7 +200,7 @@ def get_sales(request):
             try:
                 vente['promo_client'] = Client.objects.filter(idClient=vente['client'])[0].promo
             except Exception as e:
-                print(e)
+                # print(e)
                 vente['promo_client'] = 0
         ventes.append(vente)
 
@@ -297,8 +297,9 @@ def post_order(cmd):
         commande = Commande.objects.get(id=order['idCommande'])
         commande.statut = "Reçue"
         commande.save()
-    except:
+    except Exception as e:
         print('Tried to deliver: ', order['idCommande'], ' but didn\'t work, maybe it doesn\'t exist')
+        print(e)
 
     return HttpResponse('Order received')
 
@@ -423,7 +424,7 @@ def update_stock():
 
 def get_promo_magasin(request):
     data = api.send_request('gestion-promotion', 'promo/magasin')
-    print(data)
+    # print(data)
     try:
         promos = json.loads(data)
         # clear_promos_produits()

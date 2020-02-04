@@ -9,7 +9,7 @@ def quantity(vente, article):
     result = 0
     articlesVendus = ArticleVendu.objects.filter(article=article, vente=vente)
     for articleVendu in articlesVendus:
-        result += articleVendu.quantite
+        result += articleVendu.quantity
     return result
 
 

@@ -182,8 +182,12 @@ def get_sales(request):
         vente = model_to_dict(vente_obj)
         vente['articles'] = []
         for article_obj in vente_obj.articles.all():
-            vente['articles'].append(model_to_dict(article_obj))
+            article_vendu_obj = ArticleVendu.objects.filter(article=article_obj, vente=vente_obj)[0]
+            vente_dict = model_to_dict(article_obj)
+            vente_dict['quantity'] = article_vendu_obj.quantity
+            vente['articles'].append(vente_dict)
         ventes.append(vente)
+
 
     return JsonResponse({'tickets': ventes}, safe=False)
 
@@ -204,7 +208,7 @@ def post_sales(request):
         ArticleVendu.objects.create(
             article=tmp,
             vente=vente,
-            quantite=article['quantity']
+            quantity=article['quantity']
         )
 
     GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
@@ -238,7 +242,7 @@ def update_sales(request):
                     ArticleVendu.objects.create(
                         article=tmp,
                         vente=vente,
-                        quantite=article_dict['quantity']
+                        quantity=article_dict['quantity']
                     )
             GlobalInfo.objects.update(tickets_last_update=get_current_datetime(), caisse_is_up=True)
             update_stock()
@@ -293,9 +297,9 @@ def request_restock(request):
 
     for article_vendu in articles_vendus:
         if str(article_vendu.article_id) in article_commandes:
-            article_commandes[str(article_vendu.article_id)] += article_vendu.quantite
+            article_commandes[str(article_vendu.article_id)] += article_vendu.quantity
         else:
-            article_commandes[str(article_vendu.article_id)] = article_vendu.quantite
+            article_commandes[str(article_vendu.article_id)] = article_vendu.quantity
 
     commande = Commande.objects.create(date=get_current_datetime())
 
@@ -393,7 +397,7 @@ def update_stock():
     for a in articlesVendus:
         produit = Produit.objects.get(codeProduit=a.article_id)
         if produit.stock > 0:
-            produit.stock -= a.quantite
+            produit.stock -= a.quantity
         produit.save()
 
 

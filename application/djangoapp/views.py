@@ -188,20 +188,20 @@ def get_sales(request):
             article_vendu_obj = ArticleVendu.objects.filter(article=article_obj, vente=vente_obj)[0]
             vente_dict = model_to_dict(article_obj)
             vente_dict['quantity'] = article_vendu_obj.quantity
-            vente['articles'].append(vente_dict)
             if vente['client']:
                 try:
-                    vente['CustomerPromo'] = CustomersProducts.objects.filter(idClient=vente['client'],
-                                                                      codeProduit=article_obj.codeProduit)[0].promo
-                except Exception as e :
+                    vente_dict['promo_client_produit'] = CustomersProducts.objects.filter(idClient=vente['client'], codeProduit=article_obj.codeProduit)[0].promo
+                except Exception as e:
                     print(e)
-                    vente['CustomerPromo'] = 0
+                    vente_dict['promo_client_produit'] = 0
+            vente['articles'].append(vente_dict)
+
         if vente['client']:
             try:
-                vente['GlobalPromo'] = Client.objects.filter(idClient=vente['client'])[0].promo
+                vente['promo_client'] = Client.objects.filter(idClient=vente['client'])[0].promo
             except Exception as e:
                 print(e)
-                vente['GlobalPromo'] = 0
+                vente['promo_client'] = 0
         ventes.append(vente)
 
     return JsonResponse({'tickets': ventes}, safe=False)
@@ -281,7 +281,6 @@ def show_orders(request):
 def get_reapro(request):
     commande = list(ArticleCommande.objects.all().values())
     return JsonResponse(commande, safe=False)
-
 
 
 # Recieve order from GesCo
@@ -394,6 +393,7 @@ def restock(request):
 def get_stocks(request):
     return JsonResponse(send_stock(), safe=False)
 
+
 def send_stock():
     articles = Produit.objects.all()
     result = []
@@ -406,6 +406,7 @@ def send_stock():
     send_async_msg('business-intelligence', str({"stock": result}), "get_stock_magasin")
     result = {'stocks': result}
     return result
+
 
 def update_stock():
     articlesVendus = ArticleVendu.objects.all()
@@ -447,6 +448,7 @@ def get_promo_client(request):
     except:
         print("Couldn't load json")
 
+
 @csrf_exempt
 @require_POST
 def update_promo_customers_products(request):
@@ -465,6 +467,7 @@ def update_promo_customers_products(request):
 
     return HttpResponseRedirect('/customers')
 
+
 @require_GET
 def get_promo_customers_products(request):
     idClient = request.GET.get('idClient')
@@ -476,12 +479,14 @@ def get_promo_customers_products(request):
         promo = 0
     return JsonResponse({'promo': promo})
 
+
 def clear_promos_produits(request):
     produits = Produit.objects.all()
     for p in produits:
         p.promo = 0
         p.prixApres = p.prix
         p.save()
+
 
 def clear_promos_customers(request):
     customers = Client.objects.all()

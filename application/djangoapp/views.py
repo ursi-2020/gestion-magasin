@@ -321,15 +321,16 @@ def request_restock(request):
     produits_body = []
 
     for code_produit, quantite in article_commandes.items():
-        ArticleCommande.objects.create(
-            article=Produit.objects.get(codeProduit=code_produit),
-            commande=commande,
-            quantite=(quantite * 2)
-        )
-        produits_body.append({
-            'codeProduit': code_produit,
-            'quantite': (quantite * 2)
-        })
+        if quantite > 0:
+            ArticleCommande.objects.create(
+                article=Produit.objects.get(codeProduit=code_produit),
+                commande=commande,
+                quantite=(quantite * 2)
+            )
+            produits_body.append({
+                'codeProduit': code_produit,
+                'quantite': (quantite * 2)
+            })
 
     request_body = {
         'idCommande': commande.id,
@@ -348,23 +349,19 @@ def request_restock(request):
 def request_restock_init(request):
     GlobalInfo.objects.update(is_first_reapro=False)
     articles = Produit.objects.all()
-    article_commandes = {}
-
-    for a in articles:
-        article_commandes[str(a.codeProduit)] = a.stock
 
     commande = Commande.objects.create(date=get_current_datetime())
 
     produits_body = []
 
-    for code_produit, quantite in article_commandes.items():
+    for article in articles:
         ArticleCommande.objects.create(
-            article=Produit.objects.get(codeProduit=code_produit),
+            article=Produit.objects.get(codeProduit=article.codeProduit),
             commande=commande,
             quantite=25
         )
         produits_body.append({
-            'codeProduit': code_produit,
+            'codeProduit': article.codeProduit,
             'quantite': 25
         })
 
@@ -381,8 +378,7 @@ def request_restock_init(request):
 @csrf_exempt
 @require_POST
 def restock(request):
-    if ArticleCommande.objects.exists():
-        return request_restock(request)
+    request_restock(request)
     return request_restock_init(request)
 
 
